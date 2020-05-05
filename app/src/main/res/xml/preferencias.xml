@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="preferencias_principal" >
+    <EditTextPreference
+        android:key="URL"
+        android:title="Dirección del servidor"
+        android:inputType="text"
+        android:defaultValue="https://benoodle.net"
+        />
+    <EditTextPreference
+        android:key="INICIO_TYPE"
+        android:title="@string/title_preference"
+        android:inputType="text"
+        android:summary="Los tipos de productos que se mostrarán al inicio"
+        android:defaultValue="ramen"
+        />
+</androidx.preference.PreferenceScreen>
