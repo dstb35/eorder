@@ -15,6 +15,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -153,6 +154,12 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
                             mPicasso.setIndicatorsEnabled(true);
                             mPicasso.load(BASE_URL_API+tipo.getUrl()).resize(0, linearLayout.getHeight()).into(image);
                             linearLayout.addView(image);
+
+                            /*Probar con textview para los títulos de las categorías*/
+                            TextView text = new TextView(context);
+                            text.setText(tipo.getName());
+                            text.setLayoutParams(lp);
+                            linearLayout.addView(text);
                         }
                     }
 

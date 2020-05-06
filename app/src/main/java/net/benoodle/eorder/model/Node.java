@@ -17,7 +17,7 @@ public class Node implements Parcelable {
     @SerializedName("field_image")
     private String url;
     @SerializedName("price__number")
-    private Float price;
+    private String price;
     @SerializedName("field_productos")
     private String productos;
 
@@ -25,7 +25,7 @@ public class Node implements Parcelable {
     private String name;
     private String grade;
 
-    public Node(String productID, String title, String body, String url, Float price, String type) {
+    public Node(String productID, String title, String body, String url, String price, String type) {
         this.productID = productID;
         this.title = title;
         this.body = body;
@@ -44,11 +44,11 @@ public class Node implements Parcelable {
         this.grade = data[2];
     }
 
-    public Float getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(Float price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 

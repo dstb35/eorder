@@ -2,6 +2,8 @@ package net.benoodle.eorder.model;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
+
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static net.benoodle.eorder.MainActivity.catalog;
@@ -111,15 +113,17 @@ public class Order {
         return titulos;
     }
     
-    public float getTotal() throws Exception{
+    public Float getTotal() throws Exception{
         Float total = new Float(0.00 );
         for (OrderItem orderItem : orderItems){
             Node node = catalog.getNodeBySku(orderItem.getSku());
-            /*Cuando Price era un String, las separación de los miles salen mal
-            String FormatPrice = node.getPrice().substring(0, 4);
-            Float subtotal = Float.parseFloat(FormatPrice);
-            total += subtotal * orderItem.getQuantity();*/
-            total += node.getPrice();
+           // Pattern pattern = Pattern.compile("\\w");
+            //String FormatPrice = node.getPrice().substring(0, 4);
+            String formatPrice = node.getPrice();
+            //quitar carácteres y comas, se quedan los puntos como separador de decimales
+            formatPrice = formatPrice.replaceAll("[^0-9\\.]", ""); //quitar carácteres y comas
+            Float subtotal = Float.parseFloat(formatPrice);
+            total += subtotal * orderItem.getQuantity();
         }
         return total;
     }
