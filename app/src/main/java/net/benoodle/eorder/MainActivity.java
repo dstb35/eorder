@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -48,8 +49,8 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
     Para pasar entre actividades
      */
 
-    public static final String MENU = "menu";
-    private final String INICIO_TYPE = "menu"; //El tipo que se mostrará al principio
+    public static final String MENU = "Menús";
+    private final String INICIO_TYPE = "Menús"; //El tipo que se mostrará al principio
     public static Catalog catalog;
     public static Order order = new Order();
     private ArrayList<Tipo> tipos = new ArrayList<>();
@@ -108,35 +109,36 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
         public void onResponse(Call<ArrayList<Node>> call, Response<ArrayList<Node>> response) {
             final ArrayList<String> typesAvaliable;
             if (response.isSuccessful()) {
-                LinearLayout linearLayout;
-                linearLayout = findViewById(R.id.types);
-                linearLayout.removeAllViews();
+                LinearLayout typesLayout;
+                typesLayout = findViewById(R.id.types);
+                typesLayout.removeAllViews();
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT);
-                lp.gravity = Gravity.CENTER;
+                //lp.gravity = Gravity.CENTER;
+
+                //Altura del layout para dividir el espacio entre títulos e imágenes
+                Float height = new Float(typesLayout.getHeight());
+                Double imagesHeight = height*0.75;
+                Double textHeight = height*0.25;
                 catalog = new Catalog(response.body());
                 catalog.CrearTypes();
                 typesAvaliable = catalog.getTypes();
                 for (String name : typesAvaliable){
                     for (Tipo tipo : tipos){
                         if (tipo.getName().compareTo(name) == 0){
-                            /*Cargar imágenes de disco, ahora se ocupa Picasso con caché
-                            try {
-                                File file = new File (context.getFilesDir(), name);
-                                Bitmap bmp = BitmapFactory.decodeStream(new FileInputStream(file));
-                                ImageView image = new ImageView(context);
-                                image.setImageBitmap(bmp); //no va
-                                image.setLayoutParams(lp);
-                                image.setPadding(0,0,0,0);
-                                linearLayout.addView(image);
-                            } catch (FileNotFoundException e){
-                                e.printStackTrace();
-                            }*/
+                            LinearLayout titlesLayout = new LinearLayout(context);
+                            titlesLayout.setOrientation(LinearLayout.VERTICAL);
+                            titlesLayout.setLayoutParams(lp);
+                            titlesLayout.setGravity(Gravity.CENTER);
+                            titlesLayout.setPadding(60, 0, 60, 0);
+                            //titlesLayout.removeAllViews();
                             ImageView image = new ImageView(context);
-                            image.setLayoutParams(lp);
+                            image.setLayoutParams(new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    imagesHeight.intValue()));
                             image.setId(typesAvaliable.indexOf(name));
-                            image.setPadding(30, 0, 30, 0);
+                            //image.setPadding(30, 0, 30, 0);
                             image.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -152,14 +154,22 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
                             //Modo con SetIndicatorsEnabled ROJO Network, AZUL disk, VERDE memory
                             Picasso mPicasso = Picasso.with(context);
                             mPicasso.setIndicatorsEnabled(true);
-                            mPicasso.load(BASE_URL_API+tipo.getUrl()).resize(0, linearLayout.getHeight()).into(image);
-                            linearLayout.addView(image);
+                            //mPicasso.load(BASE_URL_API+tipo.getUrl()).resize(0, typesLayout.getHeight()).into(image);
+                            mPicasso.load(BASE_URL_API+tipo.getUrl()).resize(0, imagesHeight.intValue()).into(image);
+                            titlesLayout.addView(image);
 
                             /*Probar con textview para los títulos de las categorías*/
                             TextView text = new TextView(context);
                             text.setText(tipo.getName());
-                            text.setLayoutParams(lp);
-                            linearLayout.addView(text);
+                            text.setLayoutParams(new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    textHeight.intValue()));
+                            text.setGravity(Gravity.CENTER);
+                            TextViewCompat.setAutoSizeTextTypeWithDefaults(text, TextView.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+                            /*text.setGravity(Gravity.CENTER);
+                            text.setPadding(30, 0, 30, 0);*/
+                            titlesLayout.addView(text);
+                            typesLayout.addView(titlesLayout);
                         }
                     }
 
@@ -207,22 +217,6 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
         public void onResponse(Call<ArrayList<Tipo>> call, Response<ArrayList<Tipo>> response) {
             if (response.isSuccessful()) {
                 tipos = response.body();
-                //Descomentar para guardar imágenes en memoria. Picasso las guarda en caché
-                /*for (Tipo tipo : tipos) {
-                    String url = tipo.getUrl();
-                    ImageView image = new ImageView(context);
-                    Picasso.with(context).load(BASE_URL_API + url).into(image);
-                    try {
-                        File cachePath = new File(context.getFilesDir(), tipo.getName());
-                        cachePath.createNewFile();
-                        Bitmap bmp = image.getDrawingCache();
-                        FileOutputStream ostream = new FileOutputStream(cachePath);
-                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
-                        ostream.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }*/
             }
         }
         @Override
@@ -231,7 +225,6 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
         }
     };
 
-
         /*
     Añade al carrito el producto y la cantidad  pasadas.
     Si es un menú pide al usuario las opciones en MenuActivity
@@ -239,11 +232,11 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
      */
     @Override
     public void Añadir(Node node, int cantidad) {
-        if (node.getType().toLowerCase().equals(MENU)) {
+        if (node.getType().equals(MENU)) {
             Intent intent = new Intent(this, MenuActivity.class);
             intent.putExtra("sku", node.getSku());
             this.startActivity(intent);
-        } else if (!node.getType().toLowerCase().equals(MENU)) {
+        } else if (!node.getType().equals(MENU)) {
             order.addOrderItem(node.getSku(), cantidad, node.getTitle());
             Toast.makeText(getApplicationContext(), R.string.product_added, Toast.LENGTH_SHORT).show();
         }

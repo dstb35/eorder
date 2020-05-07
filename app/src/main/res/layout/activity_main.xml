@@ -38,6 +38,7 @@
 
     </in.goodiebag.carouselpicker.CarouselPicker>-->
 
+
     <ImageView
         android:id="@+id/cart"
         android:layout_width="0dp"
@@ -86,7 +87,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_horizontal"
-            android:orientation="horizontal"></LinearLayout>
+            android:orientation="horizontal">
+
+            <!--<LinearLayout
+                android:id="@+id/titles"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"></LinearLayout>-->
+        </LinearLayout>
+
+
     </HorizontalScrollView>
 
     <LinearLayout
