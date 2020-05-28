@@ -20,18 +20,27 @@ public class Node implements Parcelable {
     private String price;
     @SerializedName("field_productos")
     private String productos;
+    @SerializedName("field_stock")
+    private Integer stock;
+    @SerializedName("extras")
+    private String extras;
 
     private String id;
     private String name;
     private String grade;
 
-    public Node(String productID, String title, String body, String url, String price, String type) {
+    public Node(String productID, String title, String body, String url, String price, String type, Integer stock) {
         this.productID = productID;
         this.title = title;
         this.body = body;
         this.url = url;
         this.price = price;
         this.type = type.toLowerCase();
+        this.stock = stock;
+    }
+
+    public Node (String variation_id, String field_stock){
+
     }
 
     public Node (Parcel in){
@@ -106,6 +115,33 @@ public class Node implements Parcelable {
 
     public void setProductos(String productos) {
         this.productos = productos;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public String getExtras() {
+        return extras;
+    }
+
+    public void setExtras(String extras) {
+        this.extras = extras;
+    }
+
+    //Actuliza el stock del producto
+    public void updateStock(Integer quantity)
+        throws Exception{
+        if (this.stock != -1){
+            if (quantity > this.stock){
+                throw new Exception();
+            }
+            this.stock = this.stock - quantity;
+        }
     }
 
     @Override

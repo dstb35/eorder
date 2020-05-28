@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
@@ -37,7 +36,7 @@ public class MainAdaptador extends RecyclerView.Adapter<MainAdaptador.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView image;
-        private TextView body, price, title;
+        private TextView body, price, title, stock;
         private Button btComprar;
         ComprarListener comprarListener;
         //LinearLayout parentLayout;
@@ -48,6 +47,7 @@ public class MainAdaptador extends RecyclerView.Adapter<MainAdaptador.ViewHolder
             this.body = itemView.findViewById(R.id.body);
             this.price = itemView.findViewById(R.id.price);
             this.image = itemView.findViewById(R.id.image);
+            this.stock = itemView.findViewById(R.id.stock);
             this.comprarListener = comprarListener;
             this.btComprar = itemView.findViewById(R.id.btComprar);
             //parentLayout = itemView.findViewById(R.id.node);
@@ -64,26 +64,16 @@ public class MainAdaptador extends RecyclerView.Adapter<MainAdaptador.ViewHolder
         mPicasso.load(BASE_URL_API+node.getUrl()).into(holder.image);
         holder.title.setText(node.getTitle());
         holder.body.setText(node.getBody());
-        holder.price.setText(node.getPrice().toString());
+        if (node.getStock() != -1){
+            holder.stock.setText(context.getResources().getString(R.string.remain)+" "+node.getStock().toString()+" "+context.getResources().getString(R.string.unities));
+        }
+        holder.price.setText(node.getPrice());
         holder.btComprar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 comprarListener.Añadir(node, 1);
             }
         });
-        /*Para ver un producto en detalle al hacer click
-        holder.parentLayout.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(context, NodeDetailActivity.class);
-                intent.putExtra("sku", node.getSku());
-                intent.putExtra("title", node.getTitle());
-                intent.putExtra("body", node.getBody());
-                intent.putExtra("url", node.getUrl());
-                intent.putExtra("price", node.getPrice());
-
-                context.startActivity(intent);
-            }
-        });*/
     }
 
     public int getItemCount() {

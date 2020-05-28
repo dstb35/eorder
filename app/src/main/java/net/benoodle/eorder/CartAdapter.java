@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 import net.benoodle.eorder.model.Node;
@@ -39,7 +41,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         public ImageView image;
         public TextView price, title, quantity, selecciones;
         public Button btEliminar, btMas, btMenos;
-        //public NumberPicker qtPicker;
         LinearLayout parentLayout;
         EliminarListener eliminarListener;
 
@@ -51,7 +52,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             this.image = itemView.findViewById(R.id.image);
             this.quantity = itemView.findViewById(R.id.quantity);
             parentLayout = itemView.findViewById(R.id.cart_node);
-            //this.qtPicker = itemView.findViewById(R.id.qtPicker);
             this.eliminarListener = eliminarListener;
             this.btEliminar = itemView.findViewById(R.id.btEliminar);
             this.btMas = itemView.findViewById(R.id.Btmas);
@@ -60,7 +60,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     }
 
     public void onBindViewHolder(final CartAdapter.ViewHolder holder, final int i) {
-
         OrderItem orderItem = order.getOrderItems().get(i);
         try {
             final Node node = catalog.getNodeBySku(orderItem.getSku());
@@ -69,21 +68,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             if (node.getType().compareTo(MENU) == 0){
                 holder.selecciones.setText(order.getSeleccionesByID(orderItem));
                 holder.selecciones.setVisibility(View.VISIBLE);
-               // holder.qtPicker.setVisibility(View.GONE);
             }
-            holder.price.setText(node.getPrice().toString());
+            holder.price.setText(node.getPrice());
             holder.quantity.setText(String.valueOf(orderItem.getQuantity()));
-            /*holder.qtPicker.setMinValue(1);
-            holder.qtPicker.setMaxValue(10);
-            holder.qtPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-                @Override
-                public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                    //Arreglar esto, muestra mal el total
-                    order.addOrderItem(node.getSku(), newVal);
-                    holder.quantity.setText(String.valueOf(newVal));
-                    eliminarListener.ActualizarTotal();
-                }
-            });*/
             holder.btEliminar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -95,14 +82,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             holder.btMas.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    order.addOrderItem(node.getSku(), 1, node.getTitle());
+                    eliminarListener.Añadir(node.getProductID(), node.getSku(), 1, node.getTitle(), node.getType().equals(MENU), i);
                     eliminarListener.ActualizarTotal();
                 }
             });
             holder.btMenos.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    order.addOrderItem(node.getSku(), -1, node.getTitle());
+                    eliminarListener.Añadir(node.getProductID(), node.getSku(), -1, node.getTitle(), node.getType().equals(MENU), i);
                     eliminarListener.ActualizarTotal();
                 }
             });
@@ -118,6 +105,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     public interface EliminarListener{
         void Eliminar(int i);
+        void Añadir(String productID, String sku, int quantity, String title, Boolean menu, int i);
         void ActualizarTotal();
     }
 }

@@ -3,7 +3,6 @@ package net.benoodle.eorder.retrofit;
 import net.benoodle.eorder.model.LoginData;
 import net.benoodle.eorder.model.Node;
 import net.benoodle.eorder.model.Tipo;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import okhttp3.ResponseBody;
@@ -44,7 +43,9 @@ public interface ApiService {
     @POST("/node?_format=json")
     Call<Node> addNode(@Header("Authorization") String user_auth, @Header("X-CSRF-Token") String x_csrf_token, @Body Node node);
 
-    @POST("/commerce/order/create")
+    //@POST("/commerce/order/create")
+    @POST("/eorders/create?_format=json")
+    @Headers({"Content-type: application/json"})
     //Call<ResponseBody> addOrder(@Header("Authorization") String user_auth, @Header("Commerce-Cart-Token") String x_csrf_token, @Body Order order);
     //Call<ResponseBody> addOrder(@Header("Authorization") String user_auth, @Header("Commerce-Cart-Token") String x_csrf_token, @Body String order);
     //Call<ResponseBody> addOrder(@Header("Authorization") String user_auth, @Header("X-CSRF-Token") String x_csrf_token, @Body Object[] body);

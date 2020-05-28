@@ -2,15 +2,10 @@ package net.benoodle.eorder;
 
 import android.content.Context;
 import android.content.Intent;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -18,9 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.squareup.picasso.Picasso;
-
 import net.benoodle.eorder.model.Catalog;
 import net.benoodle.eorder.model.Node;
 import net.benoodle.eorder.model.Tipo;
@@ -28,13 +21,7 @@ import net.benoodle.eorder.retrofit.ApiService;
 import net.benoodle.eorder.retrofit.SharedPrefManager;
 import net.benoodle.eorder.retrofit.UtilsApi;
 import net.benoodle.eorder.model.Order;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
-
 import in.goodiebag.carouselpicker.CarouselPicker;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -51,8 +38,11 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
 
     public static final String MENU = "Menús";
     private final String INICIO_TYPE = "Menús"; //El tipo que se mostrará al principio
+    public static final String TIPO = "default";
+    public static final String STORE = "1";  //Multitienda cambiar aqui
+    public static final int REQUEST_CODE = 1;
     public static Catalog catalog;
-    public static Order order = new Order();
+    public static Order order = new Order(TIPO, STORE);
     private ArrayList<Tipo> tipos = new ArrayList<>();
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -86,16 +76,32 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
          Esto se hace por si volviera a haber stock tener las categorías cargadas en memoria desde incio
         */
         mApiService.getTypes(sharedPrefManager.getSPBasicAuth(), sharedPrefManager.getSPCsrfToken()).enqueue(Typescallback);
+        mApiService.getAllNodes(sharedPrefManager.getSPBasicAuth(), sharedPrefManager.getSPCsrfToken()).enqueue(Nodecallback);
     }
 
     protected void onStart() {
         super.onStart();
-        mApiService.getAllNodes(sharedPrefManager.getSPBasicAuth(), sharedPrefManager.getSPCsrfToken()).enqueue(Nodecallback);
+        //Si recargo el catálogo me machaca el stock, no hay que hacerlo hasta finalizar la compra.
+        //mApiService.getAllNodes(sharedPrefManager.getSPBasicAuth(), sharedPrefManager.getSPCsrfToken()).enqueue(Nodecallback);
     }
 
     public void ShowCart(View v) {
-        Intent intent = new Intent(this, CartActivity.class);
-        this.startActivity(intent);
+        /*Intent intent = new Intent(this, CartActivity.class);
+        this.startActivity(intent);*/
+        //Si el resultado es 1 es compra exitosa, recargar el catálogo. Así no machaca el stock del carrito en compras a medias.
+        startActivityForResult(new Intent(this, CartActivity.class), 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(resultCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                mApiService.getAllNodes(sharedPrefManager.getSPBasicAuth(), sharedPrefManager.getSPCsrfToken()).enqueue(Nodecallback);
+            }else{
+                adaptador.notifyDataSetChanged();
+            }
+        }
     }
 
     /*Lanza las preferencias de la app, pero están deshabilitado el botón ahora*/
@@ -115,14 +121,17 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT);
-                //lp.gravity = Gravity.CENTER;
-
                 //Altura del layout para dividir el espacio entre títulos e imágenes
                 Float height = new Float(typesLayout.getHeight());
                 Double imagesHeight = height*0.75;
                 Double textHeight = height*0.25;
                 catalog = new Catalog(response.body());
                 catalog.CrearTypes();
+                /*if (order.getOrderItems().size() > 0) {
+                    if (catalog.sincronizarStock(order)){
+                        Toast.makeText(context, R.string.no_stock, Toast.LENGTH_SHORT);
+                    }
+                }*/
                 typesAvaliable = catalog.getTypes();
                 for (String name : typesAvaliable){
                     for (Tipo tipo : tipos){
@@ -132,13 +141,11 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
                             titlesLayout.setLayoutParams(lp);
                             titlesLayout.setGravity(Gravity.CENTER);
                             titlesLayout.setPadding(60, 0, 60, 0);
-                            //titlesLayout.removeAllViews();
                             ImageView image = new ImageView(context);
                             image.setLayoutParams(new LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
                                     imagesHeight.intValue()));
                             image.setId(typesAvaliable.indexOf(name));
-                            //image.setPadding(30, 0, 30, 0);
                             image.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -154,10 +161,10 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
                             //Modo con SetIndicatorsEnabled ROJO Network, AZUL disk, VERDE memory
                             Picasso mPicasso = Picasso.with(context);
                             mPicasso.setIndicatorsEnabled(true);
+                            //Modo normal de Picasso
                             //mPicasso.load(BASE_URL_API+tipo.getUrl()).resize(0, typesLayout.getHeight()).into(image);
                             mPicasso.load(BASE_URL_API+tipo.getUrl()).resize(0, imagesHeight.intValue()).into(image);
                             titlesLayout.addView(image);
-
                             /*Probar con textview para los títulos de las categorías*/
                             TextView text = new TextView(context);
                             text.setText(tipo.getName());
@@ -166,13 +173,10 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
                                     textHeight.intValue()));
                             text.setGravity(Gravity.CENTER);
                             TextViewCompat.setAutoSizeTextTypeWithDefaults(text, TextView.AUTO_SIZE_TEXT_TYPE_UNIFORM);
-                            /*text.setGravity(Gravity.CENTER);
-                            text.setPadding(30, 0, 30, 0);*/
                             titlesLayout.addView(text);
                             typesLayout.addView(titlesLayout);
                         }
                     }
-
                 }
                 /*List<CarouselPicker.PickerItem> itemsImages = new ArrayList<>();
                 for (String tipo : types) {
@@ -225,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
         }
     };
 
-        /*
+    /*
     Añade al carrito el producto y la cantidad  pasadas.
     Si es un menú pide al usuario las opciones en MenuActivity
     Las opciones vienen de node.productos[] del server.
@@ -235,10 +239,17 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
         if (node.getType().equals(MENU)) {
             Intent intent = new Intent(this, MenuActivity.class);
             intent.putExtra("sku", node.getSku());
-            this.startActivity(intent);
+            //this.startActivity(intent);
+            //Con el result llamaremos a adaptador.notifyDataSetChange para que cambie el stock o no
+            startActivityForResult(intent, 1);
         } else if (!node.getType().equals(MENU)) {
-            order.addOrderItem(node.getSku(), cantidad, node.getTitle());
-            Toast.makeText(getApplicationContext(), R.string.product_added, Toast.LENGTH_SHORT).show();
+            try{
+                order.addOrderItem(node.getProductID(), node.getSku(), cantidad, node.getTitle());
+                Toast.makeText(getApplicationContext(), R.string.product_added, Toast.LENGTH_SHORT).show();
+            }catch (Exception e){
+                Toast.makeText(getApplicationContext(), R.string.no_sell, Toast.LENGTH_SHORT).show();
+            }
         }
+        adaptador.notifyDataSetChanged();
     }
 }

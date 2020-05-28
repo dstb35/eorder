@@ -26,39 +26,42 @@ public class LoginActivity extends AppCompatActivity {
     private AutoCompleteTextView mUsernameView;
     private EditText mPasswordView;
     private View mProgressView;
-    SharedPrefManager sharedPrefManager;
-    ApiService mApiService;
+    private SharedPrefManager sharedPrefManager;
+    private ApiService mApiService;
+    private Button mEmailSignInButton;
+    private String email, password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         sharedPrefManager = new SharedPrefManager(this);
         if (sharedPrefManager.getSPIsLoggedIn()) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         }
-
         mUsernameView = findViewById(R.id.username);
         mPasswordView = findViewById(R.id.password);
-        sharedPrefManager = new SharedPrefManager(LoginActivity.this);
+        //sharedPrefManager = new SharedPrefManager(LoginActivity.this); 2 veces?
         mApiService = UtilsApi.getAPIService();
-        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
+        mEmailSignInButton = findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                email = mUsernameView.getText().toString().trim();
+                password = mPasswordView.getText().toString().trim();
+                if (email.isEmpty() || password.isEmpty()){
+                    Toast.makeText(getApplicationContext(), R.string.empty_login, Toast.LENGTH_SHORT).show();
+                }else{
+                    attemptLogin();
+                }
             }
         });
         mProgressView = findViewById(R.id.login_progress);
     }
 
     private void attemptLogin() {
-        final String email = mUsernameView.getText().toString().trim();
-        final String password = mPasswordView.getText().toString().trim();
-
         mApiService.loginRequest(new LoginData(email, password))
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
@@ -86,7 +89,6 @@ public class LoginActivity extends AppCompatActivity {
                                     byte[] bytes_basic_auth = basic_auth.getBytes();
                                     String encoded_basic_auth = android.util.Base64.encodeToString(bytes_basic_auth, android.util.Base64.DEFAULT);
                                     sharedPrefManager.saveSPString(SharedPrefManager.SP_BASIC_AUTH, "Basic " + encoded_basic_auth.trim());
-
                                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                     startActivity(intent);
                                     finish();
@@ -101,6 +103,12 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         } else {
                             mProgressView.setVisibility(View.GONE);
+                            try {
+                                String error_message = response.errorBody().string();
+                                Toast.makeText(LoginActivity.this, error_message, Toast.LENGTH_SHORT).show();
+                            } catch (Exception e) {
+                                Toast.makeText(LoginActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
 

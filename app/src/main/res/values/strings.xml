@@ -12,6 +12,7 @@
     <string name="menu_canceled">Menú cancelado</string>
     <string name="product_not_id">Producto no encontrado con id </string>
     <string name="product_not_sku">Producto no encontrado con sku </string>
+    <string name="product_not_title">Producto no encontrado con título </string>
     <string name="buy">Comprar</string>
     <string name="delete">Eliminar</string>
     <string name="cart">Cesta</string>
@@ -26,8 +27,15 @@
     <string name="reload">Recargar</string>
     <string name="settings">Configuracion</string>
     <string name="cart_empty">La cesta está vacía</string>
-    <string name="no_stock">No queda stock para el producto. Se elimina del carrito: </string>
-    <string name="removed">Some products were removed from your cart due to lack of stock. Do you want to return to the catalog?</string>
+    <string name="no_stock">No queda stock para :</string>
+    <string name="no_stock_dessert">No queda stock para postres.</string>
+    <string name="no_stock_drinks">No queda stock para bebidas.</string>
+    <string name="no_stock_principal">No queda stock para principal.</string>
+    <string name="removed">Algunos productos del carrito se eliminar por falta de existencias. ¿Desea regresar al catálogo?</string>
     <string name="yes">Si</string>
     <string name="no">No</string>
+    <string name="empty_login">Los campos email y password no pueden estar vacíos.</string>
+    <string name="no_sell">No hay suficientes unidades del producto para la venta.</string>
+    <string name="remain">Quedan: </string>
+    <string name="unities">unidades.</string>
 </resources>

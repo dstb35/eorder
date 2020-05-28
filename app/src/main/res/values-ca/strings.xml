@@ -12,6 +12,7 @@
     <string name="menu_canceled">Menú cancel·lat</string>
     <string name="product_not_id">Producte no trobat amb id </string>
     <string name="product_not_sku">Producte no trobat amb sku </string>
+    <string name="product_not_title">Producte no trobat amb títol </string>
     <string name="buy">Comprar</string>
     <string name="delete">Esborrar</string>
     <string name="cart">Cistella</string>
@@ -26,8 +27,15 @@
     <string name="reload">Recarrega</string>
     <string name="settings">Configuració</string>
     <string name="cart_empty">El cistell està buit</string>
-    <string name="no_stock">No queda stock per al producte. S\' elimina del cistell: </string>
+    <string name="no_stock">No queda stock per a :</string>
+    <string name="no_stock_dessert">No queda stock per les postres.</string>
+    <string name="no_stock_drinks">No queda stock per les begudes.</string>
+    <string name="no_stock_principal">No queda stock pel principal.</string>
     <string name="removed">S\'han esborrat alguns productes per falta de stock. Desitja tornar al catàleg?</string>
     <string name="yes">Si</string>
     <string name="no">No</string>
+    <string name="empty_login">Els camps correu i contrasenya no poden estar buits.</string>
+    <string name="no_sell">No hi ha prou unitats del producte per a la venda.</string>
+    <string name="remain">Queden :</string>
+    <string name="unities">unitats.</string>
 </resources>

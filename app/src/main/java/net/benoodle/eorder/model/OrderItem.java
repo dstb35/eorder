@@ -10,6 +10,8 @@ public class OrderItem {
     private int quantity;
     @SerializedName("sku")
     private String sku;
+    @SerializedName("variation_id")
+    private String productID;
 
     //Selecciones apunta al productID (variation ID) en el server, elecciones del menú.
     @SerializedName("field_selecciones")
@@ -18,13 +20,15 @@ public class OrderItem {
     private String title;
 
 
-    public OrderItem(String sku, int quantity, String title){
+    public OrderItem(String productID, String sku, int quantity, String title){
+        this.productID = productID;
         this.sku = sku;
         this.quantity = quantity;
         this.title = title;
     }
 
-    public OrderItem(String sku, int quantity, ArrayList<String> selecciones, String title){
+    public OrderItem(String productID, String sku, int quantity, ArrayList<String> selecciones, String title){
+        this.productID = productID;
         this.sku = sku;
         this.quantity = quantity;
         this.selecciones = selecciones;
@@ -61,6 +65,14 @@ public class OrderItem {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getProductID() {
+        return productID;
+    }
+
+    public void setProductID(String productID) {
+        this.productID = productID;
     }
 }
 
