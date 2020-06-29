@@ -1,5 +1,7 @@
 package net.benoodle.eorder;
 
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,8 +29,7 @@ import in.goodiebag.carouselpicker.CarouselPicker;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static net.benoodle.eorder.retrofit.UtilsApi.BASE_URL_API;
+//import static net.benoodle.eorder.retrofit.UtilsApi.BASE_URL_API;
 
 public class MainActivity extends AppCompatActivity implements MainAdaptador.ComprarListener {
     /*Alternativa a declararlo como static, Node implementa parcelable.
@@ -36,20 +38,19 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
     Para pasar entre actividades
      */
 
-    public static final String MENU = "Menús";
-    private final String INICIO_TYPE = "Menús"; //El tipo que se mostrará al principio
-    public static final String TIPO = "default";
-    public static final String STORE = "1";  //Multitienda cambiar aqui
+    public static final String MENU = "menu";
+    private final String INICIO_TYPE = "menu"; //El tipo que se mostrará al principio
     public static final int REQUEST_CODE = 1;
     public static Catalog catalog;
-    public static Order order = new Order(TIPO, STORE);
+    public static Order order;
     private ArrayList<Tipo> tipos = new ArrayList<>();
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private MainAdaptador adaptador;
     private SharedPrefManager sharedPrefManager;
     private ApiService mApiService;
-    private CarouselPicker carouselPicker;
+    private String URL;
+    //private CarouselPicker carouselPicker;
     private Context context;
     //private HashMap<String, ImageView> typesImages = new HashMap<>();
 
@@ -57,16 +58,34 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(decorView.SYSTEM_UI_FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+
+        //Ejectuar la app en modo quiosco, necesita device owner via adb
+        //dpm set-device-owner net.benoodle.eorder/.MyAdmin
+        //http://wenchaojiang.github.io/blog/realise-Android-kiosk-mode/
+        DevicePolicyManager myDevicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+        ComponentName mDPM = new ComponentName(this, MyAdmin.class);
+        if (myDevicePolicyManager.isDeviceOwnerApp(this.getPackageName())) {
+            String[] packages = {this.getPackageName()};
+            myDevicePolicyManager.setLockTaskPackages(mDPM, packages);
+        } else {
+            Toast.makeText(getApplicationContext(),"Not owner", Toast.LENGTH_LONG).show();
+        }
+        startLockTask();
         this.context = getApplicationContext();
-        carouselPicker = findViewById(R.id.carousel);
+        //carouselPicker = findViewById(R.id.carousel);
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-
         layoutManager = new LinearLayoutManager(MainActivity.this);
         recyclerView.setLayoutManager(layoutManager);
-        mApiService = UtilsApi.getAPIService();
         sharedPrefManager = new SharedPrefManager(this);
+        this.URL = sharedPrefManager.getSPUrl();
+        mApiService = UtilsApi.getAPIService(this.URL);
+        order = new Order (sharedPrefManager.getSPStore());
         if (!sharedPrefManager.getSPIsLoggedIn()) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
@@ -76,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
          Esto se hace por si volviera a haber stock tener las categorías cargadas en memoria desde incio
         */
         mApiService.getTypes(sharedPrefManager.getSPBasicAuth(), sharedPrefManager.getSPCsrfToken()).enqueue(Typescallback);
-        mApiService.getAllNodes(sharedPrefManager.getSPBasicAuth(), sharedPrefManager.getSPCsrfToken()).enqueue(Nodecallback);
+        //mApiService.getAllNodes(sharedPrefManager.getSPBasicAuth(), sharedPrefManager.getSPCsrfToken()).enqueue(Nodecallback);
     }
 
     protected void onStart() {
@@ -97,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
         super.onActivityResult(resultCode, resultCode, data);
         if (requestCode == REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                mApiService.getAllNodes(sharedPrefManager.getSPBasicAuth(), sharedPrefManager.getSPCsrfToken()).enqueue(Nodecallback);
+                mApiService.getAllNodes(sharedPrefManager.getSPStore(), sharedPrefManager.getSPBasicAuth(), sharedPrefManager.getSPCsrfToken()).enqueue(Nodecallback);
             }else{
                 adaptador.notifyDataSetChanged();
             }
@@ -121,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT);
+                lp.setMargins(0, 0, 0, 16);
                 //Altura del layout para dividir el espacio entre títulos e imágenes
                 Float height = new Float(typesLayout.getHeight());
                 Double imagesHeight = height*0.75;
@@ -150,20 +170,18 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
                                 @Override
                                 public void onClick(View v) {
                                    String tipo = typesAvaliable.get(v.getId());
-                                   adaptador = new MainAdaptador(catalog.TypeCatalog(tipo), MainActivity.this, MainActivity.this);
+                                   adaptador = new MainAdaptador(catalog.TypeCatalog(tipo), MainActivity.this,   MainActivity.this);
                                    recyclerView.setAdapter(adaptador);
                                 }
                             });
-                            /*
-                            Modo sin setIndicatorsEnabled para ver si es de internet o de caché
-                            Picasso.with(context).load(BASE_URL_API+tipo.getURL()).resize(0, linearLayout.getHeight()).into(image);
-                            */
+                            //Modo sin setIndicatorsEnabled para ver si es de internet o de caché
+                            Picasso.with(context).load(URL+tipo.getUrl()).resize(0, typesLayout.getHeight()).into(image);
                             //Modo con SetIndicatorsEnabled ROJO Network, AZUL disk, VERDE memory
-                            Picasso mPicasso = Picasso.with(context);
-                            mPicasso.setIndicatorsEnabled(true);
+                            //Picasso mPicasso = Picasso.with(context);
+                            //mPicasso.setIndicatorsEnabled(true);
                             //Modo normal de Picasso
                             //mPicasso.load(BASE_URL_API+tipo.getUrl()).resize(0, typesLayout.getHeight()).into(image);
-                            mPicasso.load(BASE_URL_API+tipo.getUrl()).resize(0, imagesHeight.intValue()).into(image);
+                            //mPicasso.load(BASE_URL_API+tipo.getUrl()).resize(0, imagesHeight.intValue()).into(image);
                             titlesLayout.addView(image);
                             /*Probar con textview para los títulos de las categorías*/
                             TextView text = new TextView(context);
@@ -221,6 +239,7 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
         public void onResponse(Call<ArrayList<Tipo>> call, Response<ArrayList<Tipo>> response) {
             if (response.isSuccessful()) {
                 tipos = response.body();
+                mApiService.getAllNodes(sharedPrefManager.getSPStore(), sharedPrefManager.getSPBasicAuth(), sharedPrefManager.getSPCsrfToken()).enqueue(Nodecallback);
             }
         }
         @Override
@@ -235,16 +254,16 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
     Las opciones vienen de node.productos[] del server.
      */
     @Override
-    public void Añadir(Node node, int cantidad) {
+    public void Añadir(Node node, int quantity) {
         if (node.getType().equals(MENU)) {
             Intent intent = new Intent(this, MenuActivity.class);
-            intent.putExtra("sku", node.getSku());
+            intent.putExtra("id", node.getProductID());
             //this.startActivity(intent);
             //Con el result llamaremos a adaptador.notifyDataSetChange para que cambie el stock o no
             startActivityForResult(intent, 1);
         } else if (!node.getType().equals(MENU)) {
             try{
-                order.addOrderItem(node.getProductID(), node.getSku(), cantidad, node.getTitle());
+                order.addOrderItem(node.getProductID(), quantity);
                 Toast.makeText(getApplicationContext(), R.string.product_added, Toast.LENGTH_SHORT).show();
             }catch (Exception e){
                 Toast.makeText(getApplicationContext(), R.string.no_sell, Toast.LENGTH_SHORT).show();

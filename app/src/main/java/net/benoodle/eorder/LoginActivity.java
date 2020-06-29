@@ -2,6 +2,7 @@ package net.benoodle.eorder;
 
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,37 +25,52 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
 
     private AutoCompleteTextView mUsernameView;
-    private EditText mPasswordView;
+    private EditText mPasswordView, mUrl, mStore;
     private View mProgressView;
     private SharedPrefManager sharedPrefManager;
     private ApiService mApiService;
     private Button mEmailSignInButton;
-    private String email, password;
+    private String email, password, URL, store_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         sharedPrefManager = new SharedPrefManager(this);
-        if (sharedPrefManager.getSPIsLoggedIn()) {
+        /*if (sharedPrefManager.getSPIsLoggedIn()) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
-        }
+        }*/
         mUsernameView = findViewById(R.id.username);
+        mUsernameView.setText(sharedPrefManager.getSPEmail());
         mPasswordView = findViewById(R.id.password);
-        //sharedPrefManager = new SharedPrefManager(LoginActivity.this); 2 veces?
-        mApiService = UtilsApi.getAPIService();
+        mPasswordView.setText(sharedPrefManager.getSPPassword());
+        mUrl = findViewById(R.id.url);
+        mUrl.setText(sharedPrefManager.getSPUrl());
+        mStore = findViewById(R.id.store);
+        mStore.setText(sharedPrefManager.getSPStore());
         mEmailSignInButton = findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 email = mUsernameView.getText().toString().trim();
                 password = mPasswordView.getText().toString().trim();
-                if (email.isEmpty() || password.isEmpty()){
+                store_id = mStore.getText().toString().trim();
+                //Poner el protocolo automáticamente
+                URL = mUrl.getText().toString().trim();
+                if (email.isEmpty() || password.isEmpty()) {
                     Toast.makeText(getApplicationContext(), R.string.empty_login, Toast.LENGTH_SHORT).show();
+                }else if(store_id.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), R.string.empty_store, Toast.LENGTH_SHORT).show();
+                }else if (URL.isEmpty()){
+                    Toast.makeText(getApplicationContext(), R.string.empty_url, Toast.LENGTH_SHORT).show();
                 }else{
-                    attemptLogin();
+                    try {
+                        attemptLogin();
+                    } catch (Exception e){
+                        Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -62,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void attemptLogin() {
+        mApiService = UtilsApi.getAPIService(URL);
         mApiService.loginRequest(new LoginData(email, password))
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
@@ -77,8 +94,11 @@ public class LoginActivity extends AppCompatActivity {
                                     String user_id = jsonRESULTS.getJSONObject("current_user").getString("uid");
                                     String name = jsonRESULTS.getJSONObject("current_user").getString("name");
                                     sharedPrefManager.saveSPString(SharedPrefManager.SP_NAME, name);
+                                    sharedPrefManager.saveSPString(SharedPrefManager.SP_PASSWORD, password);
                                     sharedPrefManager.saveSPString(SharedPrefManager.SP_EMAIL, email);
                                     sharedPrefManager.saveSPString(SharedPrefManager.SP_CSRF_TOKEN, csrf_token);
+                                    sharedPrefManager.saveSPString(SharedPrefManager.URL, URL);
+                                    sharedPrefManager.saveSPString(SharedPrefManager.STORE, store_id);
                                     sharedPrefManager.saveSPString(SharedPrefManager.SP_LOGOUT_TOKEN, logout_token);
                                     sharedPrefManager.saveSPString(SharedPrefManager.SP_USER_ID, user_id);
                                     sharedPrefManager.saveSPBoolean(SharedPrefManager.SP_IS_LOGGED_IN, true);
@@ -104,7 +124,8 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             mProgressView.setVisibility(View.GONE);
                             try {
-                                String error_message = response.errorBody().string();
+                                JSONObject jsonRESULTS = new JSONObject(response.errorBody().string());
+                                String error_message = jsonRESULTS.getString("message");
                                 Toast.makeText(LoginActivity.this, error_message, Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
                                 Toast.makeText(LoginActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();

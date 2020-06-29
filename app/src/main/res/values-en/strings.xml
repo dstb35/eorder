@@ -4,6 +4,7 @@
     <string name="prompt_email">Email</string>
     <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
+    <string name="store">Store ID</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_field_required">This field is required</string>
@@ -35,6 +36,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="empty_login">Email and password fields cannot be emtpy.</string>
+    <string name="empty_url">URL field cannot be emtpy.</string>
+    <string name="empty_store">Store field cannot be emtpy.</string>
     <string name = "no_sell"> There aren\'t enough units of the product for sale.</string>
     <string name="remain">There are :</string>
     <string name="unities">units left.</string>

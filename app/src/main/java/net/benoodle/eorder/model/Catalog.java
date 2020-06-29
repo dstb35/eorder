@@ -19,14 +19,14 @@ public class Catalog {
         throw new Exception(R.string.product_not_id + id);
     }
 
-    public Node getNodeBySku (String sku) throws Exception {
+    /*public Node getNodeBySku (String sku) throws Exception {
         for (Node node : catalog){
             if (node.getSku().compareTo(sku) == 0){
                 return node;
             }
         }
         throw new Exception(R.string.product_not_sku + sku);
-    }
+    }*/
 
     public Node getNode (Integer i){
         return catalog.get(i);
@@ -37,14 +37,14 @@ public class Catalog {
     Útil para comprobar si se han despublicado productos mientras se hacía la compra
     pero se han quedado en la cesta. Devuelve false si no existe.
      */
-    public Boolean CheckNodebySku (String sku){
+    /*public Boolean CheckNodebySku (String sku){
         for (Node node : catalog){
             if (node.getSku().compareTo(sku) == 0){
                 return true;
             }
         }
         return false;
-    }
+    }*/
 
     /*Conmprueba si el titulo pasado sigue en el catálogo
     Devuelve false si no existe.

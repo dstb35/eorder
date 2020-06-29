@@ -22,15 +22,15 @@ public class MenuActivity extends AppCompatActivity {
     private Node node;
     private int numRepeticiones;
     private String[] titulos;
-    private String[] productos;
+    private ArrayList<String> productos;
     private List<String> extras;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String sku = getIntent().getStringExtra("sku");
+        String id = getIntent().getStringExtra("id");
         try {
-            node = catalog.getNodeBySku(sku);
+            node = catalog.getNodeById(id);
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             finish();
@@ -44,18 +44,13 @@ public class MenuActivity extends AppCompatActivity {
 
     public void PedirSelecciones() {
         //productos[] son las opciones asociadas al menú.
-        productos = node.getProductos().split(",", -2);
-        numRepeticiones = productos.length;
+        productos = node.getProductos();
+        numRepeticiones = productos.size();
 
         //extras son los productos asociados al menú, postres del menú be noodle
         //Array.asList devuelve un array inmodificable, hay que usar un wrapper
         //extras =  Arrays.asList(node.getExtras().split(",", -2));
-        extras = new ArrayList<>(Arrays.asList(node.getExtras().split(",", -2)));
-
-        /*Quitar espacios en blanco y retornos de carro de las cadenas y poner a minúsculas*/
-        for (int i = 0; i < productos.length; i++) {
-            productos[i] = productos[i].replaceAll("\\s", "").toLowerCase();
-        }
+        extras = node.getExtras();
 
         for (String producto : productos) {
             final ArrayList <Node> opciones = catalog.OpcionesMenu(producto);
@@ -82,7 +77,7 @@ public class MenuActivity extends AppCompatActivity {
                         }else{
                             //No hay comprobación de stock porque al menos una unidad habrá o se hubiese despublicado el producto.
                             try{
-                                order.addMenuItem(node.getProductID(), selecciones, node.getSku(), 1, node.getTitle());
+                                order.addMenuItem(node.getProductID(), selecciones, 1);
                             }catch (Exception e){
                                 Toast.makeText(getApplicationContext(), R.string.no_sell, Toast.LENGTH_SHORT).show();
                             }
@@ -137,7 +132,7 @@ public class MenuActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int position) {
                         selecciones.add(extras.get(position));
                         try{
-                            order.addMenuItem(node.getProductID(), selecciones, node.getSku(), 1, node.getTitle());
+                            order.addMenuItem(node.getProductID(), selecciones,1);
                         }catch (Exception e){
                             Toast.makeText(getApplicationContext(), R.string.no_sell, Toast.LENGTH_SHORT).show();
                         }

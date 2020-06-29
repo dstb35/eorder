@@ -4,6 +4,7 @@
     <string name="prompt_email">Email</string>
     <string name="prompt_username">Nombre de usuario</string>
     <string name="prompt_password">Contraseña</string>
+    <string name="store">Identificador de tienda.</string>
     <string name="action_sign_in">Loguea</string>
     <string name="action_sign_in_short">Loguea</string>
     <string name="error_field_required">Este campo es necesario</string>
@@ -35,6 +36,8 @@
     <string name="yes">Si</string>
     <string name="no">No</string>
     <string name="empty_login">Los campos email y password no pueden estar vacíos.</string>
+    <string name="empty_url">El campo Url no puede estar vacío.</string>
+    <string name="empty_store">El campo tienda no puede estar vacío.</string>
     <string name="no_sell">No hay suficientes unidades del producto para la venta.</string>
     <string name="remain">Quedan: </string>
     <string name="unities">unidades.</string>

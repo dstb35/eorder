@@ -8,7 +8,6 @@ import java.util.Map;
 
 import static java.lang.Boolean.TRUE;
 import static net.benoodle.eorder.MainActivity.catalog;
-import static net.benoodle.eorder.MainActivity.order;
 
 public class Order {
     @SerializedName("type")
@@ -24,8 +23,8 @@ public class Order {
     @SerializedName("order_id")
     private String orderId;
 
-    public Order(String type, String store_id) {
-        this.type = type;
+    public Order(String store_id) {
+        this.type = "default";
         this.store_id = store_id;
     }
 
@@ -34,16 +33,17 @@ public class Order {
     para actualizar la cantidad. Lanza una excepción si no hay stock.
     Con stock -1 no hay control de stock.
      */
-    public void addOrderItem(String productID, String sku, int quantity, String title)
+    public void addOrderItem(String productID, int quantity)
         throws Exception {
-        Node node = catalog.getNodeBySku(sku);
+        int pos = catalog.getPosById(productID);
+        Node node = catalog.getNode(pos);
         Integer stock = node.getStock();
-        if (!catalog.isStock(node.getProductID(), quantity)){
+        if (!catalog.isStock(productID, quantity)){
             throw new Exception();
         }
         for (int i=0; i<orderItems.size(); i++) {
             //Comprobar si está este producto en el carrito de una compra anterior
-            if (orderItems.get(i).getSku().compareTo(sku) == 0) {
+            if (orderItems.get(i).getProductID().compareTo(productID) == 0) {
                 int newQuantity = quantity + orderItems.get(i).getQuantity();
                 //Si la cantidad de orderItems llega a 0 eliminamos el orderItem
                 if (newQuantity == 0){
@@ -53,27 +53,26 @@ public class Order {
                 }
                 //Actualizar el stock del product del catálogo
                 if (stock != -1){
-                    catalog.getNodeBySku(sku).updateStock(quantity);
+                    catalog.getNode(pos).updateStock(quantity);
                 }
                 return;
             }
         }
         //Si no se encontraba es una compra nueva, no puede ser una cantidad negativa
         if (quantity > 0){
-            OrderItem orderItem = new OrderItem(productID, sku, quantity, title);
+            OrderItem orderItem = new OrderItem(productID, quantity);
             orderItems.add(orderItem);
             if (stock != -1){
                 try{
-                    catalog.getNodeBySku(sku).updateStock(quantity);
+                    catalog.getNode(pos).updateStock(quantity);
                 }catch (Exception e){
                     e.getLocalizedMessage();
                 }
-
             }
         }
     }
 
-    public void addMenuItem(String productID, ArrayList<String> selecciones, String sku, int quantity, String title)
+    public void addMenuItem(String productID, ArrayList<String> selecciones, int quantity)
         throws Exception{
         /*
         Aunque el sku exista en algún OrderItem de la Order actual debemos crear uno nuevo porque
@@ -98,13 +97,13 @@ public class Order {
                 e.getLocalizedMessage();
             }
         }
-        OrderItem orderItem = new OrderItem(productID, sku, quantity, selecciones, title);
+        OrderItem orderItem = new OrderItem(productID, quantity, selecciones);
         //Actualizar el stock del menú en sí mismo
         try{
-            Node node = catalog.getNodeBySku(sku);
+            int pos = catalog.getPosById(productID);
+            Node node = catalog.getNode(pos);
             if (node.getStock() != -1){
-                Integer i = catalog.getPosById(node.getProductID());
-                catalog.getNode(i).updateStock(quantity);
+                catalog.getNode(pos).updateStock(quantity);
             }
         }catch (Exception e){
             e.getLocalizedMessage();
@@ -117,21 +116,22 @@ public class Order {
     public void removeOrderItem (int i)
         throws  Exception{
         OrderItem orderItem = orderItems.get(i);
-        String sku = orderItem.getSku();
+        String id = orderItem.getProductID();
         Integer quantity = orderItem.getQuantity();
-        Node node = catalog.getNodeBySku(sku);
+        int pos = catalog.getPosById(id);
+        Node node = catalog.getNode(pos);
         Integer stock = node.getStock();
         orderItems.remove(i);
         if (stock != -1) {
-            catalog.getNodeBySku(sku).updateStock(-quantity);
+            catalog.getNode(pos).updateStock(-quantity);
         }
         /*Por si era un menú lo que se ha eliminado*/
-        for(String id : orderItem.getSelecciones()){
+        for(String seleccion : orderItem.getSelecciones()){
             try{
-                Integer pos = catalog.getPosById(id);
-                Node seleccion = catalog.getNode(pos);
-                Integer stockSeleccion = seleccion.getStock();
-                if (stockSeleccion != -1) {
+                pos = catalog.getPosById(seleccion);
+                node = catalog.getNode(pos);
+                stock = node.getStock();
+                if (stock != -1) {
                     catalog.getNode(pos).updateStock(-1);
                 }
             }catch (Exception e){
@@ -184,12 +184,10 @@ public class Order {
     public Float getTotal() throws Exception{
         Float total = new Float(0.00 );
         for (OrderItem orderItem : orderItems){
-            Node node = catalog.getNodeBySku(orderItem.getSku());
-           // Pattern pattern = Pattern.compile("\\w");
-            //String FormatPrice = node.getPrice().substring(0, 4);
+            Node node = catalog.getNodeById(orderItem.getProductID());
             String formatPrice = node.getPrice();
             //quitar carácteres y comas, se quedan los puntos como separador de decimales
-            formatPrice = formatPrice.replaceAll("[^0-9\\.]", ""); //quitar carácteres y comas
+            formatPrice = formatPrice.replaceAll("[^0-9\\.]", "");
             Float subtotal = Float.parseFloat(formatPrice);
             total += subtotal * orderItem.getQuantity();
         }

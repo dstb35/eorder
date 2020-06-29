@@ -4,6 +4,7 @@
     <string name="prompt_email">Email</string>
     <string name="prompt_username">Nom d\' usuari</string>
     <string name="prompt_password">Contrasenya</string>
+    <string name="store">Identificador de botiga.</string>
     <string name="action_sign_in">Logueja</string>
     <string name="action_sign_in_short">Logueja</string>
     <string name="error_field_required">Aquest camp és necessari</string>
@@ -35,6 +36,8 @@
     <string name="yes">Si</string>
     <string name="no">No</string>
     <string name="empty_login">Els camps correu i contrasenya no poden estar buits.</string>
+    <string name="empty_url">El camp Url no pot estar buit.</string>
+    <string name="empty_store">El camp botiga no pot estar buit.</string>
     <string name="no_sell">No hi ha prou unitats del producte per a la venda.</string>
     <string name="remain">Queden :</string>
     <string name="unities">unitats.</string>

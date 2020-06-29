@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 import static android.view.View.GONE;
@@ -21,8 +22,8 @@ import net.benoodle.eorder.model.User;
 import net.benoodle.eorder.retrofit.ApiService;
 import net.benoodle.eorder.retrofit.SharedPrefManager;
 import net.benoodle.eorder.retrofit.UtilsApi;
-import static net.benoodle.eorder.MainActivity.STORE;
-import static net.benoodle.eorder.MainActivity.TIPO;
+//import static net.benoodle.eorder.MainActivity.STORE;
+//import static net.benoodle.eorder.MainActivity.TIPO;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,8 +41,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
     private CartAdapter adaptador;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    SharedPrefManager sharedPrefManager;
-    ApiService mApiService;
+    private SharedPrefManager sharedPrefManager;
+    private ApiService mApiService;
     private HashMap<String, Object> body = new HashMap<>();
     private User user;
     private TextView Btotal;
@@ -49,13 +50,17 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(decorView.SYSTEM_UI_FLAG_FULLSCREEN);
         setContentView(R.layout.activity_cart);
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(CartActivity.this);
         recyclerView.setLayoutManager(layoutManager);
-        mApiService = UtilsApi.getAPIService();
         sharedPrefManager = new SharedPrefManager(this);
+        mApiService = UtilsApi.getAPIService(sharedPrefManager.getSPUrl());
         this.Btotal = findViewById(R.id.Btotal);
         if (!sharedPrefManager.getSPIsLoggedIn()) {
             Intent loginIntent = new Intent(CartActivity.this, LoginActivity.class);
@@ -166,7 +171,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
                 builder.setCancelable(false);
                 builder.setPositiveButton(R.string.gotIt, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        order = new Order(TIPO, STORE);
+                        order = new Order(sharedPrefManager.getSPStore());
                         dialog.dismiss();
                         setResult(RESULT_OK);
                         finish();
@@ -247,14 +252,14 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
     }
 
     @Override
-    public void Añadir(String productID, String sku, int quantity, String title, Boolean menu, int i){
+    public void Añadir(String productID, int quantity, Boolean menu, int i){
         try{
             if (menu && quantity > 0) {
                 Intent intent = new Intent(this, MenuActivity.class);
-                intent.putExtra("sku", sku);
+                intent.putExtra("id", productID);
                 this.startActivity(intent);
             }else if (!menu){
-                order.addOrderItem(productID, sku, quantity, title);
+                order.addOrderItem(productID, quantity);
             }else if (menu && quantity < 0){
                 this.Eliminar(i);
             }

@@ -10,21 +10,21 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 import net.benoodle.eorder.model.Node;
-
 import java.util.ArrayList;
-
-import static net.benoodle.eorder.retrofit.UtilsApi.BASE_URL_API;
+//import static net.benoodle.eorder.retrofit.UtilsApi.BASE_URL_API;
 
 public class MainAdaptador extends RecyclerView.Adapter<MainAdaptador.ViewHolder> {
 
     private Context context;
     private ComprarListener comprarListener;
     private ArrayList<Node> catType = new ArrayList<>();
+    //private String URL;
 
     public MainAdaptador(ArrayList<Node> catType, Context context, ComprarListener comprarListener) {
         this.context = context;
         this.comprarListener = comprarListener;
         this.catType = catType;
+        //this.URL = URL;
     }
 
     @Override
@@ -56,18 +56,19 @@ public class MainAdaptador extends RecyclerView.Adapter<MainAdaptador.ViewHolder
 
     public void onBindViewHolder(MainAdaptador.ViewHolder holder, int i) {
         final Node node = catType.get(i);
-        /*Modo sin setIndicatorsEnabled para ver si es de internet o de caché
-        Picasso.with(context).load(BASE_URL_API+node.getUrl()).into(holder.image);setIndicatorsEnabled(true)*/
+        //Modo sin setIndicatorsEnabled para ver si es de internet o de caché
+        //Picasso.with(context).load(URL+node.getUrl()).into(holder.image); URLS absolutas ahora
+        Picasso.with(context).load(node.getUrl()).into(holder.image);
         //Modo con SetIndicatorsEnabled ROJO Network, AZUL disk, VERDE memory
-        Picasso mPicasso = Picasso.with(context);
-        mPicasso.setIndicatorsEnabled(true);
-        mPicasso.load(BASE_URL_API+node.getUrl()).into(holder.image);
+        //Picasso mPicasso = Picasso.with(context);
+        //mPicasso.setIndicatorsEnabled(true);
+        //mPicasso.load(BASE_URL_API+node.getUrl()).into(holder.image);
         holder.title.setText(node.getTitle());
         holder.body.setText(node.getBody());
         if (node.getStock() != -1){
             holder.stock.setText(context.getResources().getString(R.string.remain)+" "+node.getStock().toString()+" "+context.getResources().getString(R.string.unities));
         }
-        holder.price.setText(node.getPrice());
+        holder.price.setText(node.getPrice() + " €");
         holder.btComprar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

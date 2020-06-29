@@ -13,6 +13,7 @@ import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ApiService {
 
@@ -32,9 +33,13 @@ public interface ApiService {
     @Headers({"Content-type: application/json"})
     Call<NodeList<Node>> getAllNodes(@Header("Authorization") String user_auth, @Header("X-CSRF-Token") String x_csrf_token);*/
 
-    @GET("eorder/?_format=json")
+    /*@GET("eorder/?_format=json")
     @Headers({"Content-type: application/json"})
-    Call<ArrayList<Node>> getAllNodes(@Header("Authorization") String user_auth, @Header("X-CSRF-Token") String x_csrf_token);
+    Call<ArrayList<Node>> getAllNodes(@Header("Authorization") String user_auth, @Header("X-CSRF-Token") String x_csrf_token);*/
+
+    @GET("eorders/products?_format=json")
+    @Headers({"Content-type: application/json"})
+    Call<ArrayList<Node>> getAllNodes(@Query("store_id") String store_id, @Header("Authorization") String user_auth, @Header("X-CSRF-Token") String x_csrf_token);
 
     /*@GET("eorder/?_format=json")
     @Headers({"Content-type: application/json"})

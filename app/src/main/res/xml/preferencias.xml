@@ -15,4 +15,10 @@
         android:summary="Los tipos de productos que se mostrarán al inicio"
         android:defaultValue="ramen"
         />
+    <EditTextPreference
+        android:key="store"
+        android:title="STORE"
+        android:inputType="number"
+        android:defaultValue="01"
+        />
 </androidx.preference.PreferenceScreen>

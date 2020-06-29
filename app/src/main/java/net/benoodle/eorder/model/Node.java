@@ -4,26 +4,28 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 
 public class Node implements Parcelable {
 
     @SerializedName("variation_id")
     private String productID;
-    @SerializedName("sku")
-    private String sku;
+    /*@SerializedName("sku")
+    private String sku;*/
     private String title;
     private String type;
     private String body;
-    @SerializedName("field_image")
+    @SerializedName("url")
     private String url;
-    @SerializedName("price__number")
+    @SerializedName("price")
     private String price;
-    @SerializedName("field_productos")
-    private String productos;
-    @SerializedName("field_stock")
+    @SerializedName("productos")
+    private ArrayList<String> productos;
+    @SerializedName("stock")
     private Integer stock;
     @SerializedName("extras")
-    private String extras;
+    private ArrayList<String> extras;
 
     private String id;
     private String name;
@@ -101,20 +103,16 @@ public class Node implements Parcelable {
         this.productID = productID;
     }
 
-    public String getSku() {
+    /*public String getSku() {
         return sku;
     }
 
     public void setSku(String sku) {
         this.sku = sku;
-    }
+    }*/
 
-    public String getProductos() {
+    public ArrayList<String> getProductos() {
         return productos;
-    }
-
-    public void setProductos(String productos) {
-        this.productos = productos;
     }
 
     public Integer getStock() {
@@ -125,12 +123,8 @@ public class Node implements Parcelable {
         this.stock = stock;
     }
 
-    public String getExtras() {
+    public ArrayList<String> getExtras() {
         return extras;
-    }
-
-    public void setExtras(String extras) {
-        this.extras = extras;
     }
 
     //Actuliza el stock del producto
@@ -151,7 +145,7 @@ public class Node implements Parcelable {
             return false;
         if (obj == this)
             return true;
-        return this.getSku() == ((Node) obj).getSku();
+        return this.getProductID() == ((Node) obj).getProductID();
     }
 
     @Override
