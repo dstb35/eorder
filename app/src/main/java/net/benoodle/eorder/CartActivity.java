@@ -167,7 +167,11 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
                     e.printStackTrace();
                 }
                 AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
-                builder.setTitle(String.format("%s%s", getResources().getString(R.string.ordercompleted), order.getOrderId()));
+                if (sharedPrefManager.getSPModus()){
+                    builder.setTitle(String.format("%s%s", getResources().getString(R.string.ordermoduson), order.getOrderId()));
+                }else{
+                    builder.setTitle(String.format("%s%s", getResources().getString(R.string.ordermodusoff), order.getOrderId()));
+                }
                 builder.setCancelable(false);
                 builder.setPositiveButton(R.string.gotIt, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

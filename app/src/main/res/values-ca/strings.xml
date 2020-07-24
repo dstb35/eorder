@@ -20,7 +20,8 @@
     <string name="total">Total: </string>
     <string name="choose">Escull: </string>
     <string name="cancel">Cancel·la</string>
-    <string name="ordercompleted">Número de comanda :</string>
+    <string name="ordermoduson">Si us plau, passi per caixa per pagar la comanda amb nº :</string>
+    <string name="ordermodusoff">Si us plau, pagui al recollir la comanda amb nº :</string>
     <string name="gotIt">EL tinc!</string>
     <string name="catalog">Catàleg</string>
     <string name="title_preference">Tipus de productes</string>
@@ -41,4 +42,5 @@
     <string name="no_sell">No hi ha prou unitats del producte per a la venda.</string>
     <string name="remain">Queden :</string>
     <string name="unities">unitats.</string>
+    <string name="modus">Les comandes s\'han de cobrar abans d\' assignar-les.</string>
 </resources>

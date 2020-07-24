@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
 
         @Override
         public void onFailure(Call<ArrayList<Node>> call, Throwable t) {
-            t.printStackTrace();
+            Toast.makeText(MainActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -244,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
         }
         @Override
         public void onFailure(Call<ArrayList<Tipo>> call, Throwable t) {
-            t.printStackTrace();
+            Toast.makeText(MainActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
         }
     };
 

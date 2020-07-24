@@ -10,6 +10,7 @@ import android.view.View.OnClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private AutoCompleteTextView mUsernameView;
     private EditText mPasswordView, mUrl, mStore;
+    private Switch swmodus;
     private View mProgressView;
     private SharedPrefManager sharedPrefManager;
     private ApiService mApiService;
@@ -37,11 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         sharedPrefManager = new SharedPrefManager(this);
-        /*if (sharedPrefManager.getSPIsLoggedIn()) {
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        }*/
+        swmodus = findViewById(R.id.modus);
         mUsernameView = findViewById(R.id.username);
         mUsernameView.setText(sharedPrefManager.getSPEmail());
         mPasswordView = findViewById(R.id.password);
@@ -104,6 +102,7 @@ public class LoginActivity extends AppCompatActivity {
                                     sharedPrefManager.saveSPBoolean(SharedPrefManager.SP_IS_LOGGED_IN, true);
                                     sharedPrefManager.saveSPString(SharedPrefManager.COOKIE, Cookies[0]);
                                     sharedPrefManager.saveSPString(SharedPrefManager.COOKIE_EXPIRES, Cookies[1]);
+                                    sharedPrefManager.saveSPBoolean(SharedPrefManager.MODUS, swmodus.isChecked());
                                     //String basic_auth = username + ":" + password;
                                     String basic_auth = name + ":" + password;
                                     byte[] bytes_basic_auth = basic_auth.getBytes();
@@ -135,8 +134,9 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.e("debug", "onFailure: ERROR > " + t.toString());
+                        Toast.makeText(LoginActivity.this, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                         mProgressView.setVisibility(View.GONE);
+
                     }
                 });
     }

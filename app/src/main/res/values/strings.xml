@@ -20,7 +20,8 @@
     <string name="total">Total: </string>
     <string name="choose">Elige:  </string>
     <string name="cancel">Cancela</string>
-    <string name="ordercompleted">Tu número de pedido es :</string>
+    <string name="ordermoduson">Por favor, pasa por caja para pagar tu pedido nº :</string>
+    <string name="ordermodusoff">Por favor, pague al recoger el pedido nº :</string>
     <string name="gotIt">¡Lo tengo!</string>
     <string name="catalog">Catálogo</string>
     <string name="title_preference">Tipo de produtos</string>
@@ -41,4 +42,5 @@
     <string name="no_sell">No hay suficientes unidades del producto para la venta.</string>
     <string name="remain">Quedan: </string>
     <string name="unities">unidades.</string>
+    <string name="modus">Los pedidos deben pagarse antes de asignarlos.</string>
 </resources>
