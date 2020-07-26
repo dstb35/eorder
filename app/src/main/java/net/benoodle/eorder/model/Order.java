@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.Boolean.TRUE;
-import static net.benoodle.eorder.MainActivity.catalog;
+import static net.benoodle.eorder.TypesActivity.catalog;
 
 public class Order {
     @SerializedName("type")

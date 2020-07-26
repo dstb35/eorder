@@ -11,6 +11,8 @@ public class Tipo {
     private String name;
     @SerializedName("url")
     private String url;
+    @SerializedName("id")
+    private String id;
 
     private Image image;
 
@@ -43,5 +45,7 @@ public class Tipo {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    public String getId() { return id;}
 }
 

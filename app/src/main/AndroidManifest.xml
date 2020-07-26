@@ -22,6 +22,7 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".CartActivity" />
         <activity android:name=".MenuActivity" />
+        <activity android:name=".TypesActivity" />
         <activity android:name=".PreferenciasActivity" />
         <receiver android:name=".MyAdmin"
             android:label="sample_device_admin"

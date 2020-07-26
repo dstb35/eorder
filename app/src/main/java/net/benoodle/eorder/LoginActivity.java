@@ -108,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
                                     byte[] bytes_basic_auth = basic_auth.getBytes();
                                     String encoded_basic_auth = android.util.Base64.encodeToString(bytes_basic_auth, android.util.Base64.DEFAULT);
                                     sharedPrefManager.saveSPString(SharedPrefManager.SP_BASIC_AUTH, "Basic " + encoded_basic_auth.trim());
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    Intent intent = new Intent(LoginActivity.this, TypesActivity.class);
                                     startActivity(intent);
                                     finish();
                                 } else {

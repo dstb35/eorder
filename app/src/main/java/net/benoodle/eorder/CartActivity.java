@@ -12,7 +12,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 import static android.view.View.GONE;
-import static net.benoodle.eorder.MainActivity.catalog;
+import static net.benoodle.eorder.TypesActivity.catalog;
 import static net.benoodle.eorder.MainActivity.order;
 
 import net.benoodle.eorder.model.Catalog;

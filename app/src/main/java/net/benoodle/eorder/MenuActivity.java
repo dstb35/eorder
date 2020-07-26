@@ -8,7 +8,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import net.benoodle.eorder.model.Node;
-import static net.benoodle.eorder.MainActivity.catalog;
+import static net.benoodle.eorder.TypesActivity.catalog;
 import static net.benoodle.eorder.MainActivity.order;
 
 import java.lang.reflect.Array;
