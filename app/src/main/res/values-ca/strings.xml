@@ -1,19 +1,14 @@
 <resources>
     <string name="app_name">Eorder</string>
-    <string name="title_activity_login">Loguejat</string>
     <string name="prompt_email">Email</string>
-    <string name="prompt_username">Nom d\' usuari</string>
     <string name="prompt_password">Contrasenya</string>
     <string name="store">Identificador de botiga.</string>
     <string name="action_sign_in">Logueja</string>
     <string name="action_sign_in_short">Logueja</string>
-    <string name="error_field_required">Aquest camp és necessari</string>
     <string name="product_added">Producte afegit al cistell</string>
     <string name="menu_added">Menú afegit al cistell</string>
     <string name="menu_canceled">Menú cancel·lat</string>
     <string name="product_not_id">Producte no trobat amb id </string>
-    <string name="product_not_sku">Producte no trobat amb sku </string>
-    <string name="product_not_title">Producte no trobat amb títol </string>
     <string name="buy">Comprar</string>
     <string name="delete">Esborrar</string>
     <string name="cart">Cistella</string>
@@ -26,13 +21,9 @@
     <string name="catalog">Catàleg</string>
     <string name="title_preference">Tipus de productes</string>
     <string name="done">Fet</string>
-    <string name="reload">Recarrega</string>
-    <string name="settings">Configuració</string>
     <string name="cart_empty">El cistell està buit</string>
     <string name="no_stock">No queda stock per a :</string>
     <string name="no_stock_dessert">No queda stock per les postres.</string>
-    <string name="no_stock_drinks">No queda stock per les begudes.</string>
-    <string name="no_stock_principal">No queda stock pel principal.</string>
     <string name="removed">S\'han esborrat alguns productes per falta de stock. Desitja tornar al catàleg?</string>
     <string name="yes">Si</string>
     <string name="no">No</string>

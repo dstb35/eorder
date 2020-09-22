@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="8dp"
+    style="@style/AppTheme"
     tools:context="net.benoodle.eorder.CartActivity">
 
 
@@ -29,6 +30,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:width="160dp"
         android:onClick="Catalog"
         android:text="@string/catalog"
         app:layout_constraintEnd_toStartOf="@+id/Btcomprar"
@@ -40,6 +42,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:width="160dp"
         android:onClick="Comprar"
         android:text="@string/buy"
         app:layout_constraintEnd_toEndOf="parent"

@@ -95,7 +95,7 @@ public class SharedPrefManager {
         return sp.getString(STORE, "");
     }
     public String getSPUrl() {
-        return sp.getString(URL, "");
+        return sp.getString(URL, "https://benoodle.net");
     }
     public String getSPCookieExpires() { return sp.getString(COOKIE_EXPIRES, ""); }
     public Boolean getSPModus() { return sp.getBoolean(MODUS, false); }

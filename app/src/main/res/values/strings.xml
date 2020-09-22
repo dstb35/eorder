@@ -1,19 +1,14 @@
 <resources>
     <string name="app_name">Eorder</string>
-    <string name="title_activity_login">Loguea</string>
     <string name="prompt_email">Email</string>
-    <string name="prompt_username">Nombre de usuario</string>
     <string name="prompt_password">Contraseña</string>
     <string name="store">Identificador de tienda.</string>
     <string name="action_sign_in">Loguea</string>
     <string name="action_sign_in_short">Loguea</string>
-    <string name="error_field_required">Este campo es necesario</string>
     <string name="product_added">Producto añadido a la cesta</string>
     <string name="menu_added">Menú añadido a la cesta</string>
     <string name="menu_canceled">Menú cancelado</string>
     <string name="product_not_id">Producto no encontrado con id </string>
-    <string name="product_not_sku">Producto no encontrado con sku </string>
-    <string name="product_not_title">Producto no encontrado con título </string>
     <string name="buy">Comprar</string>
     <string name="delete">Eliminar</string>
     <string name="cart">Cesta</string>
@@ -26,13 +21,9 @@
     <string name="catalog">Catálogo</string>
     <string name="title_preference">Tipo de produtos</string>
     <string name="done">Hecho</string>
-    <string name="reload">Recargar</string>
-    <string name="settings">Configuracion</string>
     <string name="cart_empty">La cesta está vacía</string>
     <string name="no_stock">No queda stock para :</string>
     <string name="no_stock_dessert">No queda stock para postres.</string>
-    <string name="no_stock_drinks">No queda stock para bebidas.</string>
-    <string name="no_stock_principal">No queda stock para principal.</string>
     <string name="removed">Algunos productos del carrito se eliminar por falta de existencias. ¿Desea regresar al catálogo?</string>
     <string name="yes">Si</string>
     <string name="no">No</string>

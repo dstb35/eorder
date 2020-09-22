@@ -1,19 +1,14 @@
 <resources>
     <string name="app_name">Eorder</string>
-    <string name="title_activity_login">Log in</string>
     <string name="prompt_email">Email</string>
-    <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
     <string name="store">Store ID</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="error_field_required">This field is required</string>
     <string name="product_added">Product added</string>
     <string name="menu_added">Meal added</string>
     <string name="menu_canceled">Meal cancelled</string>
     <string name="product_not_id">Product doesn\'t found with id </string>
-    <string name="product_not_sku">Product doesn\'t found with sku </string>
-    <string name="product_not_title">Product doesn\'t found with title </string>
     <string name="buy">Buy</string>
     <string name="delete">Delete</string>
     <string name="cart">Cart</string>
@@ -25,14 +20,10 @@
     <string name="gotIt">I got it!</string>
     <string name="catalog">Catalog</string>
     <string name="title_preference">Products type</string>
-    <string name="reload">Reload</string>
     <string name="done">Done</string>
-    <string name="settings">Settings</string>
     <string name="cart_empty">The cart is empty</string>
     <string name="no_stock">There isn\'t stock for :</string>
     <string name="no_stock_dessert">There is no stock for desserts</string>
-    <string name="no_stock_drinks">There is no stock for drinks</string>
-    <string name="no_stock_principal">There is no stock for main dish</string>
     <string name="removed">Some products were removed from the cart. Would you like to return to the catalog?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>

@@ -77,6 +77,10 @@ public class TypesActivity extends AppCompatActivity  {
             startActivity(intent);
             finish();
         }
+    }
+
+    public void onResume(){
+        super.onResume();
         /*Cargar todos los tipos de productos, aunque no haya productos en stock para algunas categorías.
          Esto se hace por si volviera a haber stock tener las categorías cargadas en memoria desde incio
         */
@@ -100,16 +104,20 @@ public class TypesActivity extends AppCompatActivity  {
                 typesLayout.removeAllViews();
                 //lp.setMargins(0, 0, 0, 16);
                 //Altura del layout para dividir el espacio entre títulos e imágenes
-                Float width = new Float(typesLayout.getWidth());
-                Float height = new Float(typesLayout.getHeight());
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                Double imagesWidth = new Float (displayMetrics.widthPixels)*0.20;
+                Double imagesHeight = new Float (displayMetrics.heightPixels)*0.45;
+                //Float width = new Float(typesLayout.getWidth());
+                //Float height = new Float(typesLayout.getHeight()*0.30);
                 //Double fourTypesheight = screenHeight*0.25;
                 //Double imagesWidth = screenWidth*0.25;
                 //Double fourTypesheight = height*0.25;
-                Double imagesWidth = width*0.15;
+                //Double imagesWidth = width*0.15;
                 LinearLayout.LayoutParams titlesParams = new LinearLayout.LayoutParams(
                         imagesWidth.intValue(),
                         LinearLayout.LayoutParams.WRAP_CONTENT);
-                titlesParams.setMargins(80, 20, 80, 20);
+                titlesParams.setMargins(15, 0, 15, 0);
                 catalog = new Catalog(response.body());
                 catalog.CrearTypes();
                 typesAvaliable = catalog.getTypes();
@@ -122,7 +130,7 @@ public class TypesActivity extends AppCompatActivity  {
                                 fourTypesLayout.setOrientation(LinearLayout.HORIZONTAL);
                                 fourTypesLayout.setLayoutParams(new LinearLayout.LayoutParams(
                                         LinearLayout.LayoutParams.MATCH_PARENT,
-                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                        imagesHeight.intValue()
                                 ));
                                 fourTypesLayout.setGravity(Gravity.CENTER);
                                 typesLayout.addView(fourTypesLayout);
@@ -152,9 +160,11 @@ public class TypesActivity extends AppCompatActivity  {
                             titleLayout.addView(image);
                             TextView text = new TextView(context);
                             text.setText(tipo.getName());
-                            text.setLayoutParams(new LinearLayout.LayoutParams(
+                            text.setWidth(imagesWidth.intValue());
+                            text.setMinHeight(80);
+                            /*text.setLayoutParams(new LinearLayout.LayoutParams(
                                     LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.MATCH_PARENT));
+                                    LinearLayout.LayoutParams.WRAP_CONTENT));*/
                             text.setGravity(Gravity.CENTER);
                             //TextViewCompat.setAutoSizeTextTypeWithDefaults(text, TextView.AUTO_SIZE_TEXT_TYPE_UNIFORM);
                             TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(text, 24, 100, 2, TypedValue.COMPLEX_UNIT_SP);

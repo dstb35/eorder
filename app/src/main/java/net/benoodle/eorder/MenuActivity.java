@@ -3,17 +3,12 @@ package net.benoodle.eorder;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import net.benoodle.eorder.model.Node;
 import static net.benoodle.eorder.TypesActivity.catalog;
 import static net.benoodle.eorder.MainActivity.order;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MenuActivity extends AppCompatActivity {
@@ -63,7 +58,7 @@ public class MenuActivity extends AppCompatActivity {
                 titulos[i] = opciones.get(i).getTitle();
             }
             AlertDialog.Builder builder = new AlertDialog.Builder(MenuActivity.this);
-            builder.setTitle(getResources().getString(R.string.choose) + producto);
+            builder.setTitle( getResources().getString(R.string.choose)+ " " + producto);
             builder.setCancelable(false);
             builder.setSingleChoiceItems(titulos, -1, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int position) {

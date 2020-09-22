@@ -249,7 +249,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
             Btotal.setText("");
             Btotal.setText(String.format("%s%s €", getResources().getString(R.string.total), String.format("%.2f", order.getTotal())));
             //CambiarAdaptador();
-        }catch (Exception e) {
+        } catch (Exception e) {
             Btotal.setText(e.getLocalizedMessage());
         }
         recyclerView.getAdapter().notifyDataSetChanged();

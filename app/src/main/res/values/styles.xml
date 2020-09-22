@@ -1,11 +1,52 @@
 <resources>
-
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <!--<item name="colorPrimary">@color/products</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorAccent</item>-->
+        <item name="android:colorBackground">@color/background</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="android:buttonStyle">@style/MyCustomButton</item>
+        <item name="android:textViewStyle">@style/MyCustomTextView</item>
+        <item name="android:editTextStyle">@style/MyCustomEditText</item>
+        <item name="android:scrollViewStyle">@style/MyCustomVerticalScrollBar</item>
+        <item name="android:horizontalScrollViewStyle">@style/MyCustomHorizontalScrollBar</item>
+        <item name="recyclerViewStyle">@style/MyCustomVerticalScrollBar</item>
     </style>
 
+    <style name="MyCustomButton" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/button</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+    </style>
+
+    <style name="MyCustomTextView" parent="Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/text</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+    </style>
+    <style name="MyCustomEditText" parent="Widget.AppCompat.EditText">
+        <item name="android:textColor">@color/text</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+    </style>
+    <style name="MyCustomVerticalScrollBar">
+        <item name="android:scrollbarAlwaysDrawVerticalTrack">true</item>
+        <item name="android:scrollbarStyle">insideInset</item>
+        <item name="android:scrollbars">vertical</item>
+        <item name="android:fadeScrollbars">false</item>
+        <item name="android:scrollbarThumbVertical">@drawable/scrollbar_vertical</item>
+        <item name="android:scrollbarSize">6dp</item>
+    </style>
+    <style name="MyCustomHorizontalScrollBar">
+        <item name="android:scrollbarAlwaysDrawHorizontalTrack">true</item>
+        <item name="android:scrollbarStyle">outsideOverlay</item>
+        <item name="android:scrollbars">horizontal</item>
+        <item name="android:fadeScrollbars">false</item>
+        <item name="android:scrollbarThumbHorizontal">@drawable/scrollbar_horizontal</item>
+        <item name="android:scrollbarSize">2dp</item>
+    </style>
 </resources>
