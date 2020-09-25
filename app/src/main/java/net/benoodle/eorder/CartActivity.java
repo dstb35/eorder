@@ -14,17 +14,11 @@ import android.widget.Toast;
 import static android.view.View.GONE;
 import static net.benoodle.eorder.TypesActivity.catalog;
 import static net.benoodle.eorder.MainActivity.order;
-
-import net.benoodle.eorder.model.Catalog;
-import net.benoodle.eorder.model.Node;
 import net.benoodle.eorder.model.Order;
 import net.benoodle.eorder.model.User;
 import net.benoodle.eorder.retrofit.ApiService;
 import net.benoodle.eorder.retrofit.SharedPrefManager;
 import net.benoodle.eorder.retrofit.UtilsApi;
-//import static net.benoodle.eorder.MainActivity.STORE;
-//import static net.benoodle.eorder.MainActivity.TIPO;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
