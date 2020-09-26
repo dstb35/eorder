@@ -1,13 +1,15 @@
 package net.benoodle.eorder;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import net.benoodle.eorder.model.Node;
 import static net.benoodle.eorder.TypesActivity.catalog;
-import static net.benoodle.eorder.MainActivity.order;
+import static net.benoodle.eorder.TypesActivity.order;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class MenuActivity extends AppCompatActivity {
             finish();
         }
         if (!catalog.isStock(node.getProductID(), 1)){
-            Toast.makeText(getApplicationContext(), R.string.no_sell, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_sell), Toast.LENGTH_SHORT).show();
             finish();
         }
         PedirSelecciones();
@@ -75,9 +77,9 @@ public class MenuActivity extends AppCompatActivity {
                             try{
                                 order.addMenuItem(node.getProductID(), selecciones, 1);
                             }catch (Exception e){
-                                Toast.makeText(getApplicationContext(), R.string.no_sell, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), getResources().getString (R.string.no_sell), Toast.LENGTH_SHORT).show();
                             }
-                            Toast.makeText(getApplicationContext(), R.string.menu_added, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getResources().getString (R.string.menu_added), Toast.LENGTH_SHORT).show();
                             finish();
                         }
                     }else{
@@ -88,7 +90,7 @@ public class MenuActivity extends AppCompatActivity {
             builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
-                    Toast.makeText(getApplicationContext(), R.string.menu_canceled, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.menu_canceled), Toast.LENGTH_SHORT).show();
                     finish();
                 }
             });
@@ -130,9 +132,9 @@ public class MenuActivity extends AppCompatActivity {
                         try{
                             order.addMenuItem(node.getProductID(), selecciones,1);
                         }catch (Exception e){
-                            Toast.makeText(getApplicationContext(), R.string.no_sell, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_sell), Toast.LENGTH_SHORT).show();
                         }
-                        Toast.makeText(getApplicationContext(), R.string.menu_added, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.menu_added), Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                         setResult(0);
                         finish();
@@ -141,7 +143,7 @@ public class MenuActivity extends AppCompatActivity {
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        Toast.makeText(getApplicationContext(), R.string.menu_canceled, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.menu_canceled), Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 });

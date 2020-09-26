@@ -34,4 +34,11 @@
     <string name="remain">Quedan: </string>
     <string name="unities">unidades.</string>
     <string name="modus">Los pedidos deben pagarse antes de asignarlos.</string>
+
+    <string-array name="languages">
+        <item value="Español">Español</item>
+        <item name="Català">Català</item>
+        <item name="English">English</item>
+    </string-array>
 </resources>
+

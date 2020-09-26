@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import static net.benoodle.eorder.TypesActivity.order;
 
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -45,7 +46,6 @@ import static net.benoodle.eorder.TypesActivity.tipos;
 public class MainActivity extends AppCompatActivity implements MainAdaptador.ComprarListener {
 
     public static final int REQUEST_CODE = 1;
-    public static Order order;
     public static String MENU = "menu";
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
         sharedPrefManager = new SharedPrefManager(this);
         this.URL = sharedPrefManager.getSPUrl();
         mApiService = UtilsApi.getAPIService(this.URL);
-        order = new Order(sharedPrefManager.getSPStore());
         if (!sharedPrefManager.getSPIsLoggedIn()) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
@@ -183,9 +182,9 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
         } else if (!node.getType().equals(MENU)) {
             try {
                 order.addOrderItem(node.getProductID(), quantity);
-                Toast.makeText(getApplicationContext(), R.string.product_added, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, getResources().getString(R.string.product_added), Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
-                Toast.makeText(getApplicationContext(), R.string.no_sell, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, getResources().getString(R.string.no_sell), Toast.LENGTH_SHORT).show();
             }
         }
         adaptador.notifyDataSetChanged();

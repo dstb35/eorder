@@ -8,14 +8,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.squareup.picasso.Picasso;
@@ -27,21 +33,27 @@ import net.benoodle.eorder.retrofit.SharedPrefManager;
 import net.benoodle.eorder.retrofit.UtilsApi;
 import net.benoodle.eorder.model.Order;
 import java.util.ArrayList;
+import java.util.Locale;
+
 import in.goodiebag.carouselpicker.CarouselPicker;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 //import static net.benoodle.eorder.retrofit.UtilsApi.BASE_URL_API;
 
-public class TypesActivity extends AppCompatActivity  {
+public class TypesActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private Context context;
+    public static Order order;
     private SharedPrefManager sharedPrefManager;
     private String URL;
     private ApiService mApiService;
     public static ArrayList<Tipo> tipos = new ArrayList<>();
     public static Catalog catalog;
     private float screenWidth, screenHeight;
+    private Spinner spinner;
+    private Locale myLocale;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,12 +83,41 @@ public class TypesActivity extends AppCompatActivity  {
         this.screenWidth = displayMetrics.widthPixels / displayMetrics.density;
         sharedPrefManager = new SharedPrefManager(this);
         this.URL = sharedPrefManager.getSPUrl();
+        this.order = new Order(sharedPrefManager.getSPStore());
         mApiService = UtilsApi.getAPIService(this.URL);
         if (!sharedPrefManager.getSPIsLoggedIn()) {
             Intent intent = new Intent(TypesActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
         }
+        spinner = (Spinner) findViewById(R.id.spinner);
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        spinner.setOnItemSelectedListener(this);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.languages, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+    }
+
+    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        String lang= parent.getItemAtPosition(pos).toString();
+        String languageCode =""  ;
+        switch (lang){
+            case "Español":
+                languageCode = "es";
+                break;
+            case "Català":
+                languageCode = "ca";
+                break;
+            case "English":
+                languageCode = "en";
+                break;
+        }
+        changeLang(languageCode);
+
+    }
+
+    public void onNothingSelected(AdapterView<?> parent) {
     }
 
     public void onResume(){
@@ -85,6 +126,22 @@ public class TypesActivity extends AppCompatActivity  {
          Esto se hace por si volviera a haber stock tener las categorías cargadas en memoria desde incio
         */
         mApiService.getTypes(sharedPrefManager.getSPBasicAuth(), sharedPrefManager.getSPCsrfToken()).enqueue(Typescallback);
+    }
+
+    public void changeLang(String languageCode){
+        /*Locale locale = new Locale(languageCode);
+        Configuration config = getBaseContext().getResources().getConfiguration();
+        config.setLocale(locale);
+        //context.createConfigurationContext(config);
+        config.locale = locale;
+        context.update
+        config.updateConfiguration(config, res.getDisplayMetrics());*/
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getBaseContext().getResources().updateConfiguration(config,
+                getBaseContext().getResources().getDisplayMetrics());
     }
 
     /*Lanza las preferencias de la app, pero están deshabilitado el botón ahora*/
@@ -195,4 +252,5 @@ public class TypesActivity extends AppCompatActivity  {
             Toast.makeText(context, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
         }
     };
+
 }

@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import static android.view.View.GONE;
 import static net.benoodle.eorder.TypesActivity.catalog;
-import static net.benoodle.eorder.MainActivity.order;
+import static net.benoodle.eorder.TypesActivity.order;
 import net.benoodle.eorder.model.Order;
 import net.benoodle.eorder.model.User;
 import net.benoodle.eorder.retrofit.ApiService;
@@ -87,41 +87,10 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
         CambiarAdaptador();
         ActualizarTotal();
         if (order.getOrderItems().size() == 0){
-            Toast.makeText(getApplicationContext(), R.string.cart_empty, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.cart_empty), Toast.LENGTH_LONG).show();
             findViewById(R.id.Btcomprar).setVisibility(GONE);
         }
     }
-
-    //Solo se usaba si recargaba el catálogo cada vez que volvía al main activity
-    /*public boolean ComprobarProductos () {
-        /*Antes de mostrar el carrito hay que comprobar que no se haya despublicado
-        algún producto que ya estuviera en el carrito anteriormente.
-        Devuelve true si no ha eliminado nada, false si hubo que borrar algo.*/
-       /* boolean result = true;
-        ArrayList<OrderItem> removeOrderItems = new ArrayList<>();
-        for (OrderItem orderItem : order.getOrderItems()){
-           if (!catalog.CheckNodebySku(orderItem.getSku())){
-               removeOrderItems.add(orderItem);
-               result = false;
-               Toast.makeText(getApplicationContext(),  getResources().getString(R.string.no_stock)+orderItem.getTitle(), Toast.LENGTH_SHORT).show();
-               continue;
-           }
-           //Miramos las selecciones de los menus
-           if (orderItem.getSelecciones().size() > 0 ){
-               for (String seleccion : orderItem.getSelecciones()){
-                   if (!catalog.CheckNodebyTitle(seleccion)) {
-                       removeOrderItems.add(orderItem);
-                       result = false;
-                       Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_stock)+orderItem.getTitle(), Toast.LENGTH_SHORT).show();
-                       break;
-                   }
-               }
-           }
-
-        }
-        order.removeAllOrderItems(removeOrderItems);
-        return result;
-    }*/
 
     public void CambiarAdaptador (){
         if (order.getOrderItems().isEmpty()){
@@ -213,7 +182,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
                     JSONObject jObjError = new JSONObject(response.errorBody().string());
                     Toast.makeText(getApplicationContext(), jObjError.get("message").toString(), Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -229,7 +198,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
         try{
             order.removeOrderItem(i);
         } catch (Exception e){
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT);
+            Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT);
         }
 
         if (order.getOrderItems().isEmpty()){
@@ -262,7 +231,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
                 this.Eliminar(i);
             }
         }catch (Exception e){
-            Toast.makeText(this, R.string.no_sell, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.no_sell), Toast.LENGTH_SHORT).show();
         }
         //Podría ocurrir que con el botón menos lleguemos a no tener orderItems en el carrito
         if (order.getOrderItems().isEmpty()){

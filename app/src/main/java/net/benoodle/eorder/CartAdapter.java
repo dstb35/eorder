@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
@@ -18,7 +17,7 @@ import net.benoodle.eorder.model.OrderItem;
 
 import static net.benoodle.eorder.MainActivity.MENU;
 import static net.benoodle.eorder.TypesActivity.catalog;
-import static net.benoodle.eorder.MainActivity.order;
+import static net.benoodle.eorder.TypesActivity.order;
 //import static net.benoodle.eorder.retrofit.UtilsApi.BASE_URL_API;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {

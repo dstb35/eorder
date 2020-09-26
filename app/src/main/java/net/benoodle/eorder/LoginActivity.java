@@ -58,11 +58,11 @@ public class LoginActivity extends AppCompatActivity {
                 //Poner el protocolo automáticamente
                 URL = mUrl.getText().toString().trim();
                 if (email.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), R.string.empty_login, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.empty_login), Toast.LENGTH_SHORT).show();
                 }else if(store_id.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), R.string.empty_store, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.empty_store), Toast.LENGTH_SHORT).show();
                 }else if (URL.isEmpty()){
-                    Toast.makeText(getApplicationContext(), R.string.empty_url, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.empty_url), Toast.LENGTH_SHORT).show();
                 }else{
                     try {
                         attemptLogin();
