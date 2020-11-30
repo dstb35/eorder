@@ -24,7 +24,8 @@
     <string name="cart_empty">The cart is empty</string>
     <string name="no_stock">There isn\'t stock for :</string>
     <string name="no_stock_dessert">There is no stock for desserts</string>
-    <string name="removed">Some products were removed from the cart. Would you like to return to the catalog?</string>
+    <string name="removed">Some products were removed from the cart due stock out. Would you like to return to the catalog?</string>
+    <string name="removed_sync">Some products were removed from the cart due stock out.</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="empty_login">Email and password fields cannot be emtpy.</string>
@@ -34,4 +35,6 @@
     <string name="remain">There are :</string>
     <string name="unities">units left.</string>
     <string name="modus">Orders must be paid before allocation.</string>
+    <string name="kakigor_bebidas">Do you want kakigori or drink?</string>
+    <string name="no_stock_kakigori">There is no stock for kakigoris.</string>
 </resources>

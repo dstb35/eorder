@@ -149,14 +149,14 @@ public class Catalog {
     Útil por si se recarga el catalágo teniendo un carrito lleno
     Devuelve false si no hubo que modificar el carrito. True si se quitaron productos.
      */
-    /*public Boolean sincronizarStock(Order order){
+    public Boolean sincronizarStock(Order order){
         Boolean result = Boolean.FALSE;
-        for (int i=0; i<order.getOrderItemsSize(); i++){
+        for (int i=0; i<order.getOrderItems().size(); i++){
             OrderItem orderItem = order.getOrderItem(i);
-            String sku = orderItem.getSku();
+            String productID = orderItem.getProductID();
             Integer quantity = orderItem.getQuantity();
             try {
-                Node node = this.getNodeBySku(sku);
+                Node node = this.getNodeById(productID);
                 Integer stock = Integer.valueOf(node.getStock());
                 if (stock != -1) {
                     if (stock > quantity) {
@@ -164,27 +164,34 @@ public class Catalog {
                     } else if (stock < quantity) {
                         order.getOrderItem(i).setQuantity(stock);
                         node.setStock(0);
+                        result = Boolean.TRUE;
                     } else if (stock == quantity) {
                         node.setStock(0);
                     }
-                    result = Boolean.TRUE;
                 }
 
                 //Mirar los menús, en teoría solo los menús tiene selecciones.
                 for (String id : orderItem.getSelecciones()) {
-                    Integer pos = this.getPosById(id);
-                    Node seleccion = this.getNode(pos);
+                    //Integer pos = this.getPosById(id);
+                    //Node seleccion = this.getNode(pos);
+                    Node seleccion = this.getNodeById(id);
                     Integer seleccionStock = seleccion.getStock();
                     if (seleccionStock < 1 && seleccionStock != -1) {
-                        throw new Exception();
+                        order.removeOrderItem(i);
+                        /* TODO No borra todos los menús */
+                        result = Boolean.TRUE;
                     }
                     node.setStock(seleccionStock - 1);
-                    this.setNode(pos, seleccion);
+                    //this.setNode(pos, seleccion);
                 }
             }catch (Exception e){
                 e.getLocalizedMessage();
             }
         }
         return result;
-    }*/
+    }
+
+    public ArrayList<Node> getCatalog() {
+        return catalog;
+    }
 }

@@ -25,6 +25,7 @@
     <string name="no_stock">No queda stock per a :</string>
     <string name="no_stock_dessert">No queda stock per les postres.</string>
     <string name="removed">S\'han esborrat alguns productes per falta de stock. Desitja tornar al catàleg?</string>
+    <string name="removed_sync">S\'han esborrat alguns productes del cistell per falta de stock.</string>
     <string name="yes">Si</string>
     <string name="no">No</string>
     <string name="empty_login">Els camps correu i contrasenya no poden estar buits.</string>
@@ -34,4 +35,6 @@
     <string name="remain">Queden :</string>
     <string name="unities">unitats.</string>
     <string name="modus">Les comandes s\'han de cobrar abans d\' assignar-les.</string>
+    <string name="kakigor_bebidas">Vols kakigori o beguda?</string>
+    <string name="no_stock_kakigori">No queda stock per kakigoris.</string>
 </resources>

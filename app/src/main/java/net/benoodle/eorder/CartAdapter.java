@@ -6,19 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.NumberPicker;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 import net.benoodle.eorder.model.Node;
 import net.benoodle.eorder.model.OrderItem;
-
 import static net.benoodle.eorder.MainActivity.MENU;
 import static net.benoodle.eorder.TypesActivity.catalog;
 import static net.benoodle.eorder.TypesActivity.order;
-//import static net.benoodle.eorder.retrofit.UtilsApi.BASE_URL_API;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
@@ -40,7 +35,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         public ImageView image;
         public TextView price, title, quantity, selecciones;
         public Button btEliminar, btMas, btMenos;
-        //LinearLayout parentLayout;
         EliminarListener eliminarListener;
 
         public ViewHolder(View itemView, EliminarListener eliminarListener) {
@@ -50,7 +44,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             this.price = itemView.findViewById(R.id.price);
             this.image = itemView.findViewById(R.id.image);
             this.quantity = itemView.findViewById(R.id.quantity);
-            //parentLayout = itemView.findViewById(R.id.cart_node);
             this.eliminarListener = eliminarListener;
             this.btEliminar = itemView.findViewById(R.id.btEliminar);
             this.btMas = itemView.findViewById(R.id.Btmas);

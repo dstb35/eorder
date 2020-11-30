@@ -1,5 +1,6 @@
 package net.benoodle.eorder;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import androidx.appcompat.app.AlertDialog;
@@ -40,6 +41,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
     private HashMap<String, Object> body = new HashMap<>();
     private User user;
     private TextView Btotal;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,31 +67,13 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
 
     protected void onStart(){
         super.onStart();
-        //Solo se usaba si recargaba el catálogo cada vez que volvía al main activity
-        /*/if (!ComprobarProductos()){
-            AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
-            builder.setTitle(R.string.removed);
-            builder.setCancelable(false);
-            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                    finish();
-                }
-            });
-            builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        }*/
         CambiarAdaptador();
         ActualizarTotal();
         if (order.getOrderItems().size() == 0){
             Toast.makeText(getApplicationContext(), getResources().getString(R.string.cart_empty), Toast.LENGTH_LONG).show();
             findViewById(R.id.Btcomprar).setVisibility(GONE);
         }
+        this.context = getApplicationContext();
     }
 
     public void CambiarAdaptador (){
@@ -159,7 +143,9 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
                     ActualizarTotal();
                     adaptador.notifyDataSetChanged();
                     AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
-                    builder.setTitle(R.string.removed);
+                    TextView textView = new TextView(context);
+                    textView.setText(getResources().getString(R.string.removed));
+                    builder.setCustomTitle(textView);
                     builder.setCancelable(false);
                     builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {

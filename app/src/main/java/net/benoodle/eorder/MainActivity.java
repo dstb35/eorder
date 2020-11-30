@@ -1,16 +1,11 @@
 package net.benoodle.eorder;
 
-import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import static net.benoodle.eorder.TypesActivity.order;
-
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -21,27 +16,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.squareup.picasso.Picasso;
-
-import net.benoodle.eorder.model.Catalog;
 import net.benoodle.eorder.model.Node;
 import net.benoodle.eorder.model.OrderItem;
 import net.benoodle.eorder.model.Tipo;
 import net.benoodle.eorder.retrofit.ApiService;
 import net.benoodle.eorder.retrofit.SharedPrefManager;
 import net.benoodle.eorder.retrofit.UtilsApi;
-import net.benoodle.eorder.model.Order;
-
 import java.util.ArrayList;
-
-import in.goodiebag.carouselpicker.CarouselPicker;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 import static net.benoodle.eorder.TypesActivity.catalog;
 import static net.benoodle.eorder.TypesActivity.tipos;
+import static net.benoodle.eorder.TypesActivity.order;
 
 public class MainActivity extends AppCompatActivity implements MainAdaptador.ComprarListener {
 
@@ -51,8 +36,6 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
     private RecyclerView.LayoutManager layoutManager;
     private MainAdaptador adaptador;
     private SharedPrefManager sharedPrefManager;
-    private ApiService mApiService;
-    private String URL;
     private Context context;
     private String type;
     private LinearLayout typesLayout, resumenLayout;
@@ -74,8 +57,6 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
         layoutManager = new LinearLayoutManager(MainActivity.this);
         recyclerView.setLayoutManager(layoutManager);
         sharedPrefManager = new SharedPrefManager(this);
-        this.URL = sharedPrefManager.getSPUrl();
-        mApiService = UtilsApi.getAPIService(this.URL);
         if (!sharedPrefManager.getSPIsLoggedIn()) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
@@ -150,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
                             recyclerView.setAdapter(adaptador);
                         }
                     });
-                    Picasso.with(context).load(URL + tipo.getUrl()).resize(0, typesLayout.getHeight()).into(image);
+                    Picasso.with(context).load(tipo.getUrl()).resize(0, typesLayout.getHeight()).into(image);
                     titlesLayout.addView(image);
                     TextView text = new TextView(context);
                     text.setText(tipo.getName());
@@ -176,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
         if (node.getType().equals(MENU)) {
             Intent intent = new Intent(this, MenuActivity.class);
             intent.putExtra("id", node.getProductID());
-            //this.startActivity(intent);
             //Con el result llamaremos a adaptador.notifyDataSetChange para que cambie el stock o no
             startActivityForResult(intent, 1);
         } else if (!node.getType().equals(MENU)) {
@@ -206,18 +186,11 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
                 text.setText(e.getMessage());
             }
             text.setLayoutParams(lp);
-            //text.setGravity(Gravity.CENTER);
-            //text.setTextSize(14);
             text.setAutoSizeTextTypeUniformWithConfiguration(10, 100, 2, TypedValue.COMPLEX_UNIT_DIP);
             TextViewCompat.setAutoSizeTextTypeWithDefaults(text, TextView.AUTO_SIZE_TEXT_TYPE_UNIFORM);
             resumenLayout.addView(text);
         }
-        //TextView total = new TextView(context);
         try {
-            //total.setText(System.getProperty("line.separator")+String.format("%s %s €", getResources().getString(R.string.total), String.format("%.2f", order.getTotal())));
-            //total.setTextSize(30);
-            //total.setLayoutParams(lp);
-            //resumenLayout.addView(total);
             total.setText(String.format("%s %s €", getResources().getString(R.string.total), String.format("%.2f", order.getTotal())));
         } catch (Exception e) {
             total.setText(e.getLocalizedMessage());

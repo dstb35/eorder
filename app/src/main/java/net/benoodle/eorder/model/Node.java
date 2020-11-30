@@ -11,8 +11,6 @@ public class Node implements Parcelable {
 
     @SerializedName("variation_id")
     private String productID;
-    /*@SerializedName("sku")
-    private String sku;*/
     private String title;
     private String type;
     private String body;

@@ -7,13 +7,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.annotation.DrawableRes;
 import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 import net.benoodle.eorder.model.Node;
 import java.util.ArrayList;
-//import static net.benoodle.eorder.retrofit.UtilsApi.BASE_URL_API;
 
 public class MainAdaptador extends RecyclerView.Adapter<MainAdaptador.ViewHolder> {
 
@@ -26,7 +23,6 @@ public class MainAdaptador extends RecyclerView.Adapter<MainAdaptador.ViewHolder
         this.context = context;
         this.comprarListener = comprarListener;
         this.catType = catType;
-        //this.URL = URL;
     }
 
     @Override
@@ -41,7 +37,6 @@ public class MainAdaptador extends RecyclerView.Adapter<MainAdaptador.ViewHolder
         private TextView body, price, title, stock;
         private Button btComprar;
         ComprarListener comprarListener;
-        //LinearLayout parentLayout;
 
         public ViewHolder(View itemView, ComprarListener comprarListener) {
             super(itemView);
@@ -52,14 +47,11 @@ public class MainAdaptador extends RecyclerView.Adapter<MainAdaptador.ViewHolder
             this.stock = itemView.findViewById(R.id.stock);
             this.comprarListener = comprarListener;
             this.btComprar = itemView.findViewById(R.id.btComprar);
-            //parentLayout = itemView.findViewById(R.id.node);
         }
     }
 
     public void onBindViewHolder(MainAdaptador.ViewHolder holder, int i) {
         final Node node = catType.get(i);
-        //Modo sin setIndicatorsEnabled para ver si es de internet o de caché
-        //Picasso.with(context).load(URL+node.getUrl()).into(holder.image); URLS absolutas ahora
         Picasso.with(context).load(node.getUrl()).into(holder.image);
         //Modo con SetIndicatorsEnabled ROJO Network, AZUL disk, VERDE memory
         //Picasso mPicasso = Picasso.with(context);

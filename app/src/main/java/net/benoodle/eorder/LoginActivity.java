@@ -36,6 +36,8 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Intent intent = new Intent(LoginActivity.this, TypesActivity.class);
+        startActivity(intent);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         sharedPrefManager = new SharedPrefManager(this);

@@ -5,13 +5,18 @@ import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import net.benoodle.eorder.model.Node;
+
 import static net.benoodle.eorder.TypesActivity.catalog;
 import static net.benoodle.eorder.TypesActivity.order;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class MenuActivity extends AppCompatActivity {
 
@@ -33,7 +38,7 @@ public class MenuActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             finish();
         }
-        if (!catalog.isStock(node.getProductID(), 1)){
+        if (!catalog.isStock(node.getProductID(), 1)) {
             Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_sell), Toast.LENGTH_SHORT).show();
             finish();
         }
@@ -51,9 +56,9 @@ public class MenuActivity extends AppCompatActivity {
         extras = node.getExtras();
 
         for (String producto : productos) {
-            final ArrayList <Node> opciones = catalog.OpcionesMenu(producto);
-            if (opciones.isEmpty()){
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_stock)+producto, Toast.LENGTH_SHORT).show();
+            final ArrayList<Node> opciones = catalog.OpcionesMenu(producto);
+            if (opciones.isEmpty()) {
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_stock) + producto, Toast.LENGTH_SHORT).show();
                 finish();
             }
             titulos = new String[opciones.size()];
@@ -61,28 +66,23 @@ public class MenuActivity extends AppCompatActivity {
                 titulos[i] = opciones.get(i).getTitle();
             }
             AlertDialog.Builder builder = new AlertDialog.Builder(MenuActivity.this);
-            builder.setTitle( getResources().getString(R.string.choose)+ " " + producto);
+            builder.setTitle(getResources().getString(R.string.choose) + " " + producto);
             builder.setCancelable(false);
             builder.setSingleChoiceItems(titulos, -1, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int position) {
                     //La posición de productos[] debería coincidir con la posición de opciones.
                     selecciones.add(opciones.get(position).getProductID());
                     dialog.dismiss();
-                    if (numRepeticiones == 1){
-                        //En la última repetición se pide los extras, normalmente postres
-                        if (!extras.isEmpty()){
+                    if (numRepeticiones == 1) {
+                        //En la última repetición se pide los extras
+                        if (!extras.isEmpty()) {
                             pedirExtras();
-                        }else{
+                        } else {
                             //No hay comprobación de stock porque al menos una unidad habrá o se hubiese despublicado el producto.
-                            try{
-                                order.addMenuItem(node.getProductID(), selecciones, 1);
-                            }catch (Exception e){
-                                Toast.makeText(getApplicationContext(), getResources().getString (R.string.no_sell), Toast.LENGTH_SHORT).show();
-                            }
-                            Toast.makeText(getApplicationContext(), getResources().getString (R.string.menu_added), Toast.LENGTH_SHORT).show();
-                            finish();
+                            añadirMenu();
                         }
-                    }else{
+                        dialog.dismiss();
+                    } else {
                         numRepeticiones--;
                     }
                 }
@@ -99,13 +99,12 @@ public class MenuActivity extends AppCompatActivity {
         }
     }
 
-    public void pedirExtras(){
-
+    public void pedirExtras() {
         try {
             /*Quitar espacios en blanco y retornos de carro de las cadenas y poner a minúsculas
-            * Mirar stock en catalog.isStock()
-            */
-            ArrayList <String> found = new ArrayList<>();
+             * Mirar stock en catalog.isStock()
+             */
+            ArrayList<String> found = new ArrayList<>();
             for (int i = 0; i < extras.size(); i++) {
                 String id = extras.get(i).replaceAll("\\s", "");
                 extras.set(i, id);
@@ -114,8 +113,8 @@ public class MenuActivity extends AppCompatActivity {
                 }
             }
             extras.removeAll(found);
-            if (!extras.isEmpty()){
-                final String [] extrasTitulos = new String[extras.size()];
+            if (!extras.isEmpty()) {
+                final String[] extrasTitulos = new String[extras.size()];
                 for (int i = 0; i < extras.size(); i++) {
                     try {
                         extrasTitulos[i] = catalog.getNodeById(extras.get(i)).getTitle();
@@ -129,15 +128,12 @@ public class MenuActivity extends AppCompatActivity {
                 builder.setSingleChoiceItems(extrasTitulos, -1, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int position) {
                         selecciones.add(extras.get(position));
-                        try{
-                            order.addMenuItem(node.getProductID(), selecciones,1);
-                        }catch (Exception e){
-                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_sell), Toast.LENGTH_SHORT).show();
+                        if (node.getProductID().compareTo("28") == 0) {
+                            pedirKakigori();
+                        } else {
+                            añadirMenu();
                         }
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.menu_added), Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
-                        setResult(0);
-                        finish();
                     }
                 });
                 builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -149,12 +145,61 @@ public class MenuActivity extends AppCompatActivity {
                 });
                 AlertDialog dialog = builder.create();
                 dialog.show();
-            }else{
-                Toast.makeText(getApplicationContext(),getResources().getString(R.string.no_stock_dessert), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_stock_dessert), Toast.LENGTH_SHORT).show();
                 finish();
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void pedirKakigori() {
+        Pattern pattern = Pattern.compile("^*kakigori.*");
+        final ArrayList<Node> kakigoris = new ArrayList<>();
+        for (Node node : catalog.getCatalog()) {
+            if (pattern.matcher(node.getTitle().toLowerCase()).matches()) {
+                kakigoris.add(node);
+            }
+        }
+        if (kakigoris.size() < 1){
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_stock_kakigori), Toast.LENGTH_SHORT).show();
+            finish();
+        }
+        titulos = new String[kakigoris.size()];
+        for (int i = 0; i < kakigoris.size(); i++) {
+            titulos[i] = kakigoris.get(i).getTitle();
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(MenuActivity.this);
+        builder.setTitle(getResources().getString(R.string.choose) + " " + "kakigori");
+        builder.setCancelable(false);
+        builder.setSingleChoiceItems(titulos, -1, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int position) {
+                //La posición de productos[] debería coincidir con la posición de opciones.
+                selecciones.add(kakigoris.get(position).getProductID());
+                añadirMenu();
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.menu_canceled), Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    public void añadirMenu (){
+        try {
+            order.addMenuItem(node.getProductID(), selecciones, 1);
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_sell), Toast.LENGTH_SHORT).show();
+        }
+        Toast.makeText(getApplicationContext(), getResources().getString(R.string.menu_added), Toast.LENGTH_SHORT).show();
+        setResult(0);
+        finish();
     }
 }
