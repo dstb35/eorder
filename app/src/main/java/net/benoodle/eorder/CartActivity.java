@@ -8,13 +8,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import static android.view.View.GONE;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static net.benoodle.eorder.TypesActivity.catalog;
 import static net.benoodle.eorder.TypesActivity.order;
+
+import net.benoodle.eorder.model.Cuppon;
 import net.benoodle.eorder.model.Order;
 import net.benoodle.eorder.model.User;
 import net.benoodle.eorder.retrofit.ApiService;
@@ -26,6 +33,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,6 +51,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
     private User user;
     private TextView Btotal;
     private Context context;
+    private boolean semaforo;
+    private View mProgressView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +69,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
         sharedPrefManager = new SharedPrefManager(this);
         mApiService = UtilsApi.getAPIService(sharedPrefManager.getSPUrl());
         this.Btotal = findViewById(R.id.Btotal);
+        mProgressView = findViewById(R.id.login_progress);
         if (!sharedPrefManager.getSPIsLoggedIn()) {
             Intent loginIntent = new Intent(CartActivity.this, LoginActivity.class);
             startActivity(loginIntent);
@@ -67,6 +79,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
 
     protected void onStart(){
         super.onStart();
+        this.semaforo = TRUE;
         CambiarAdaptador();
         ActualizarTotal();
         if (order.getOrderItems().size() == 0){
@@ -86,13 +99,17 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
 
     /*Método asociado al botón Comprar*/
     public void Comprar(View v) {
-        order.setEmail(sharedPrefManager.getSPEmail());
-        Map<String, Integer> totalQuantity = order.calculateTotalsQuantity();
-        body.put("totalQuantity", totalQuantity);
-        body.put("order", order);
-        user = new User(sharedPrefManager.getSPEmail(), sharedPrefManager.getSPName());
-        body.put("user", user);
-        mApiService.addOrder(sharedPrefManager.getSPBasicAuth(), sharedPrefManager.getSPCsrfToken(), body).enqueue(Ordercallback);
+        if (semaforo){
+            semaforo = FALSE;
+            mProgressView.setVisibility(View.VISIBLE);
+            order.setEmail(sharedPrefManager.getSPEmail());
+            Map<String, Integer> totalQuantity = order.calculateTotalsQuantity();
+            body.put("totalQuantity", totalQuantity);
+            body.put("order", order);
+            user = new User(sharedPrefManager.getSPEmail(), sharedPrefManager.getSPName());
+            body.put("user", user);
+            mApiService.addOrder(sharedPrefManager.getSPBasicAuth(), sharedPrefManager.getSPCsrfToken(), body).enqueue(Ordercallback);
+        }
     }
 
     /*Método asociado al botón Catalog para volver a la página de productos, acitivityMain*/
@@ -100,9 +117,75 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
         finish();
     }
 
+    /*Métido asocidado al botón Tengo un cupón para validar el cupón*/
+    public void Docuppon(View v){
+        Cuppon cuppon = new Cuppon();
+        AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
+        final EditText input = new EditText(CartActivity.this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        input.setLayoutParams(lp);
+        builder.setView(input);
+        builder.setTitle(R.string.cuppon);
+        builder.setCancelable(true);
+        builder.setPositiveButton(R.string.accept,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        cuppon.setCuppon(input.getText().toString());
+                        cuppon.setOp("validate");
+                        mProgressView.setVisibility(View.VISIBLE);
+                        mApiService.addCuppon(sharedPrefManager.getSPBasicAuth(), sharedPrefManager.getSPCsrfToken(), cuppon).enqueue(Cupponcallback);
+                    }
+                });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    Callback<Cuppon> Cupponcallback = new Callback<Cuppon>() {
+        @Override
+        public void onResponse(Call<Cuppon> call, Response<Cuppon> response) {
+            mProgressView.setVisibility(View.GONE);
+            try {
+                if (response.isSuccessful()) {
+                    Cuppon cuppon = response.body();
+                    if ((cuppon.getType().compareTo("product") == 0) && (!order.orderContainsProduct(cuppon.getProduct().toString()))){
+                        Toast.makeText(getApplicationContext(), R.string.cuppon_product, Toast.LENGTH_LONG).show();
+                    }else if (order.applyCuppon(cuppon)) {
+                        ActualizarTotal();
+                        Toast.makeText(getApplicationContext(), R.string.cuppon_ok, Toast.LENGTH_LONG).show();
+                    }else{
+                        Toast.makeText(context, R.string.cuppon_already_use, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    JSONObject jObjError = new JSONObject(response.errorBody().string());
+                    Toast.makeText(context, jObjError.getString("message"), Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(), response.errorBody().string(), Toast.LENGTH_LONG).show();
+                }
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        public void onFailure(Call<Cuppon> call, Throwable t) {
+            mProgressView.setVisibility(View.GONE);
+            Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+        }
+    };
+
     Callback<ResponseBody> Ordercallback = new Callback<ResponseBody>() {
         @Override
         public void onResponse(Call<ResponseBody> call, Response<ResponseBody>response) {
+            mProgressView.setVisibility(View.GONE);
+            semaforo = TRUE;
             if (response.isSuccessful()) {
                 try {
                     JSONObject jsonRESULTS = new JSONObject(response.body().string());
@@ -175,7 +258,9 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
 
         @Override
         public void onFailure(Call<ResponseBody> call, Throwable t) {
-            t.printStackTrace();
+            Toast.makeText(context, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            mProgressView.setVisibility(View.GONE);
+            semaforo = TRUE;
         }
     };
 
@@ -183,8 +268,10 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
     public void Eliminar(int i) {
         try{
             order.removeOrderItem(i);
+        } catch (NoSuchElementException e){
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.cuppon_removed), Toast.LENGTH_SHORT).show();
         } catch (Exception e){
-            Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT);
+            Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
         }
 
         if (order.getOrderItems().isEmpty()){
@@ -205,7 +292,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
     }
 
     @Override
-    public void Añadir(String productID, int quantity, Boolean menu, int i){
+    public void Anadir(String productID, int quantity, Boolean menu, int i){
         try{
             if (menu && quantity > 0) {
                 Intent intent = new Intent(this, MenuActivity.class);
@@ -216,6 +303,8 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.Elimi
             }else if (menu && quantity < 0){
                 this.Eliminar(i);
             }
+        } catch (NoSuchElementException e){
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.cuppon_removed), Toast.LENGTH_SHORT).show();
         }catch (Exception e){
             Toast.makeText(this, getResources().getString(R.string.no_sell), Toast.LENGTH_SHORT).show();
         }

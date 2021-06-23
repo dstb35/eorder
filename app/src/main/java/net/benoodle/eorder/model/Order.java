@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import static java.lang.Boolean.TRUE;
 import static net.benoodle.eorder.TypesActivity.catalog;
@@ -22,6 +23,10 @@ public class Order {
     private ArrayList<OrderItem> orderItems = new ArrayList<>() ;
     @SerializedName("order_id")
     private String orderId;
+    @SerializedName("total")
+    private String total;
+    @SerializedName("cuppons")
+    private ArrayList<Cuppon> cuppons = new ArrayList<>();
 
     public Order(String store_id) {
         this.type = "default";
@@ -55,6 +60,7 @@ public class Order {
                 if (stock != -1){
                     catalog.getNode(pos).updateStock(quantity);
                 }
+                deleteOrphanCuppons();
                 return;
             }
         }
@@ -138,6 +144,7 @@ public class Order {
                 e.getLocalizedMessage();
             }
         }
+        deleteOrphanCuppons();
     }
 
     public String getOrderId() {
@@ -180,17 +187,34 @@ public class Order {
         }
         return titulos;
     }
-    
-    public Float getTotal() throws Exception{
-        Float total = new Float(0.00 );
-        for (OrderItem orderItem : orderItems){
+
+    public Float getTotal() throws Exception {
+        float total = (float) 0;
+        float discounts = (float) 0;
+        for (OrderItem orderItem : orderItems) {
             Node node = catalog.getNodeById(orderItem.getProductID());
             String formatPrice = node.getPrice();
             //quitar carácteres y comas, se quedan los puntos como separador de decimales
             formatPrice = formatPrice.replaceAll("[^0-9\\.]", "");
-            Float subtotal = Float.parseFloat(formatPrice);
+            float subtotal = Float.parseFloat(formatPrice);
             total += subtotal * orderItem.getQuantity();
         }
+        /*for (Map.Entry<String, Integer> cuppon : cuppons.entrySet()) {
+            discounts += total * cuppon.getValue() / 100;
+        }*/
+        for (Cuppon cuppon : cuppons) {
+            if (cuppon.getType().compareTo("product") == 0) {
+                Node node = catalog.getNodeById(String.valueOf(cuppon.getProduct()));
+                total -= Float.parseFloat(node.getPrice());
+            }
+        }
+        for (Cuppon cuppon : cuppons) {
+            if (cuppon.getType().compareTo("percentage") == 0) {
+                discounts += total * cuppon.getPercentage() / 100;
+            }
+        }
+        total -= discounts;
+        this.total = String.valueOf(total);
         return total;
     }
 
@@ -245,5 +269,37 @@ public class Order {
             }
         }
         orderItems.removeAll(found);
+        deleteOrphanCuppons();
+    }
+
+    public boolean applyCuppon(Cuppon cuppon) {
+        if (this.cuppons.contains(cuppon)) {
+            return false;
+        } else {
+            this.cuppons.add(cuppon);
+            return true;
+        }
+    }
+
+    public boolean orderContainsProduct(String id) {
+        for (OrderItem orderItem : orderItems) {
+            if (orderItem.getProductID().compareTo(id) == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*No dejar cupones de productos sin al menos un producto asociado*/
+    public void deleteOrphanCuppons ()
+            throws NoSuchElementException {
+        for (Cuppon cuppon : cuppons) {
+            if (cuppon.getType().compareTo("product") == 0) {
+                if (!orderContainsProduct(cuppon.getProduct().toString())) {
+                    cuppons.remove(cuppon);
+                    throw new NoSuchElementException();
+                }
+            }
+        }
     }
 }

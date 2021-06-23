@@ -1,7 +1,9 @@
 package net.benoodle.eorder.retrofit;
 
+import net.benoodle.eorder.model.Cuppon;
 import net.benoodle.eorder.model.LoginData;
 import net.benoodle.eorder.model.Node;
+import net.benoodle.eorder.model.Store;
 import net.benoodle.eorder.model.Tipo;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,4 +34,12 @@ public interface ApiService {
     @POST("/eorders/create?_format=json")
     @Headers({"Content-type: application/json"})
     Call<ResponseBody> addOrder(@Header("Authorization") String user_auth, @Header("X-CSRF-Token") String x_csrf_token, @Body HashMap<String, Object> body);
+
+    @GET("eorders/stores?_format=json")
+    @Headers({"Content-type: application/json"})
+    Call<ArrayList<Store>> getStores(@Header("Authorization") String user_auth, @Query("zipcode") String zipcode, @Query("country") String country, @Header("X-CSRF-Token") String x_csrf_token);
+
+    @POST("/eorders/addcuppon")
+    @Headers({"Content-type: application/json"})
+    Call<Cuppon> addCuppon(@Header("Authorization") String user_auth, @Header("X-CSRF-Token") String x_csrf_token, @Body Cuppon cuppon);
 }

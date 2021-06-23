@@ -37,4 +37,14 @@
     <string name="modus">Orders must be paid before allocation.</string>
     <string name="kakigor_bebidas">Do you want kakigori or drink?</string>
     <string name="no_stock_kakigori">There is no stock for kakigoris.</string>
+    <string name="refresh">Refresh</string>
+    <string name="choose_store">Choose stand</string>
+    <string name="location_perm">Location permit required to check stand availability</string>
+    <string name="location_null">The location could not be accessed, please check the app permissions and activate the location.</string>
+    <string name="cuppon">I have a cuppon</string>
+    <string name="cuppon_ok">Cuppon applied</string>
+    <string name="cuppon_already_use">This cuppon had already been applied before</string>
+    <string name="accept">Accept</string>
+    <string name = "cuppon_product"> This coupon is for a product that is not currently in the cart. </string>
+    <string name = "cuppon_removed"> The coupon has been removed because there are no associated products in the cart</string>
 </resources>

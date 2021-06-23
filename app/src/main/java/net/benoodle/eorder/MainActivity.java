@@ -24,6 +24,8 @@ import net.benoodle.eorder.retrofit.ApiService;
 import net.benoodle.eorder.retrofit.SharedPrefManager;
 import net.benoodle.eorder.retrofit.UtilsApi;
 import java.util.ArrayList;
+import java.util.Locale;
+
 import static net.benoodle.eorder.TypesActivity.catalog;
 import static net.benoodle.eorder.TypesActivity.tipos;
 import static net.benoodle.eorder.TypesActivity.order;
@@ -46,10 +48,6 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(decorView.SYSTEM_UI_FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
         this.context = getApplicationContext();
         recyclerView = findViewById(R.id.recycler_view);
@@ -58,14 +56,14 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
         recyclerView.setLayoutManager(layoutManager);
         sharedPrefManager = new SharedPrefManager(this);
         if (!sharedPrefManager.getSPIsLoggedIn()) {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            Intent intent = new Intent(context, LoginActivity.class);
             startActivity(intent);
             finish();
         }
         this.type = getIntent().getStringExtra("type");
         this.resumenLayout = findViewById(R.id.resumen);
         this.total = findViewById(R.id.total);
-        typesLayout = findViewById(R.id.types);
+        typesLayout = findViewById(R.id.main_types_layout);
         typesLayout.removeAllViews();
         typesLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -101,45 +99,41 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
     }
 
     public void cargarTypes() {
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        lp.setMargins(0, 0, 0, 16);
-        //Altura del layout para dividir el espacio entre títulos e imágenes
-        Float height = new Float(typesLayout.getHeight());
-        Double imagesHeight = height * 0.75;
-        Double textHeight = height * 0.20;
+        Float height = (float) findViewById(R.id.main_types_scroll).getHeight();
+        double imagesHeight = height * 0.60;
+        double textHeight = height * 0.25;
         typesAvaliable = catalog.getTypes();
         for (String name : typesAvaliable) {
             for (Tipo tipo : tipos) {
                 if (tipo.getId().compareTo(name) == 0) {
                     LinearLayout titlesLayout = new LinearLayout(context);
                     titlesLayout.setOrientation(LinearLayout.VERTICAL);
-                    titlesLayout.setLayoutParams(lp);
+                    titlesLayout.setMinimumHeight(height.intValue());
                     titlesLayout.setGravity(Gravity.CENTER);
-                    titlesLayout.setPadding(10, 5, 0, 0);
+                    titlesLayout.setPadding(30, 0, 30, 0);
                     ImageView image = new ImageView(context);
-                    image.setLayoutParams(new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            imagesHeight.intValue()));
+                    image.setMaxHeight((int) imagesHeight);
                     image.setId(typesAvaliable.indexOf(name));
                     image.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             String tipo = typesAvaliable.get(v.getId());
-                            adaptador = new MainAdaptador(catalog.TypeCatalog(tipo), MainActivity.this, MainActivity.this);
+                            adaptador = new MainAdaptador(catalog.TypeCatalog(tipo), context, MainActivity.this);
                             recyclerView.setAdapter(adaptador);
                         }
                     });
-                    Picasso.with(context).load(tipo.getUrl()).resize(0, typesLayout.getHeight()).into(image);
+                    try{
+                        Picasso.with(context).load(tipo.getUrl()).resize(0, (int) imagesHeight).into(image);
+                    } catch (Exception e){
+                        Picasso.with(context).load(tipo.getUrl()).into(image);
+                    }
+
                     titlesLayout.addView(image);
                     TextView text = new TextView(context);
                     text.setText(tipo.getName());
-                    text.setLayoutParams(new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            textHeight.intValue()));
+                    text.setHeight((int) textHeight);
+                    text.setMinHeight((int) textHeight);
                     text.setGravity(Gravity.CENTER);
-                    TextViewCompat.setAutoSizeTextTypeWithDefaults(text, TextView.AUTO_SIZE_TEXT_TYPE_UNIFORM);
                     titlesLayout.addView(text);
                     typesLayout.addView(titlesLayout);
                 }
@@ -153,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
     Las opciones vienen de node.productos[] del server.
      */
     @Override
-    public void Añadir(Node node, int quantity) {
+    public void Anadir(Node node, int quantity) {
         if (node.getType().equals(MENU)) {
             Intent intent = new Intent(this, MenuActivity.class);
             intent.putExtra("id", node.getProductID());
@@ -186,12 +180,12 @@ public class MainActivity extends AppCompatActivity implements MainAdaptador.Com
                 text.setText(e.getMessage());
             }
             text.setLayoutParams(lp);
-            text.setAutoSizeTextTypeUniformWithConfiguration(10, 100, 2, TypedValue.COMPLEX_UNIT_DIP);
+            text.setAutoSizeTextTypeUniformWithConfiguration(2, 100, 2, TypedValue.COMPLEX_UNIT_DIP);
             TextViewCompat.setAutoSizeTextTypeWithDefaults(text, TextView.AUTO_SIZE_TEXT_TYPE_UNIFORM);
             resumenLayout.addView(text);
         }
         try {
-            total.setText(String.format("%s %s €", getResources().getString(R.string.total), String.format("%.2f", order.getTotal())));
+            total.setText(String.format("%s %s €", getResources().getString(R.string.total), String.format(Locale.getDefault(), "%.2f", order.getTotal())));
         } catch (Exception e) {
             total.setText(e.getLocalizedMessage());
         }

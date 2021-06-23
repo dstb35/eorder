@@ -8,34 +8,74 @@
     android:gravity="center_horizontal"
     tools:context=".LoginActivity">
 
-    <!-- Login progress -->
-
     <ProgressBar
         android:id="@+id/login_progress"
-        style="?android:attr/progressBarStyleLarge"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:indeterminateTint="@color/scrollbar"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <AutoCompleteTextView
         android:id="@+id/username"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_max="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:hint="@string/prompt_email"
         android:inputType="textEmailAddress"
         android:maxLines="1"
         android:singleLine="true"
+        android:imeOptions="actionNext"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
+        android:id="@+id/password"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:autofillHints="@string/prompt_password"
+        android:hint="@string/prompt_password"
+        android:imeActionId="6"
+        android:imeActionLabel="@string/action_sign_in_short"
+        android:imeOptions="actionDone"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        android:singleLine="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username"
+        app:layout_constraintWidth_max="300dp"/>
+
+    <!--<com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/lay_pass"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_max="300dp"
+        android:layout_height="wrap_content"
+        app:passwordToggleEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username" >
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:cursorVisible="true"
+            android:focusable="true"
+            android:inputType="textPassword"
+            android:maxLength="10"
+            android:maxLines="1"
+            android:hint="@string/prompt_password" />
+
+    </com.google.android.material.textfield.TextInputLayout> -->
+
+    <!--<EditText
         android:id="@+id/password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -50,7 +90,7 @@
         android:singleLine="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username" />
+        app:layout_constraintTop_toBottomOf="@+id/username" />-->
 
     <EditText
         android:id="@+id/url"
@@ -64,8 +104,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password" />
+    <!--app:layout_constraintTop_toBottomOf="@+id/password" />-->
 
-    <EditText
+
+    <!--<EditText
         android:id="@+id/store"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -94,6 +136,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/store" />
 
+    <CheckBox
+        android:id="@+id/chvoluntarios"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Tienda de voluntarios"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/url" /> -->
+
     <Button
         android:id="@+id/email_sign_in_button"
         style="?android:textAppearanceSmall"
@@ -104,7 +156,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/modus" />
+        app:layout_constraintTop_toBottomOf="@+id/url" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -37,4 +37,14 @@
     <string name="modus">Les comandes s\'han de cobrar abans d\' assignar-les.</string>
     <string name="kakigor_bebidas">Vols kakigori o beguda?</string>
     <string name="no_stock_kakigori">No queda stock per kakigoris.</string>
+    <string name="refresh">Refrescar</string>
+    <string name="choose_store">Escull stand</string>
+    <string name="location_perm">Permís d\'ubicació necessari per comprovar la disponibilitat d\'estands</string>
+    <string name="location_null">No s\'ha pogut accedir a l\' ubicació, revisa els permisos de l\' app i la configuració d\'ubicació</string>
+    <string name="cuppon">Tinc un cupó</string>
+    <string name="cuppon_ok">Cupó afegit.</string>
+    <string name="cuppon_already_use">Aquest cupó ja havia sigut aplicat.</string>
+    <string name="accept">Acceptar</string>
+    <string name="cuppon_product">Aquest cupó és per a un producte que no està al cistell actualment.</string>
+    <string name="cuppon_removed">S\' ha esborrat el cupó per no haver productes associats al cistell.</string>
 </resources>

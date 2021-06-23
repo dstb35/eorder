@@ -37,5 +37,15 @@
     <string name="modus">Los pedidos deben pagarse antes de asignarlos.</string>
     <string name="kakigor_bebidas">¿Quieres kakigori o bebida?</string>
     <string name="no_stock_kakigori">No queda stock para kakigoris.</string>
+    <string name="refresh">Refrescar</string>
+    <string name="choose_store">Elige stand</string>
+    <string name="location_perm">Permiso de ubicación necesario para comprobar la disponibilidad de stands</string>
+    <string name = "location_null">No se ha podido acceder a la ubicación, revisa los permisosde la aplicación y activa la ubicación.</string>
+    <string name="cuppon">Tengo un cupón</string>
+    <string name="cuppon_ok">Cupón aplicado.</string>
+    <string name="cuppon_already_use">Este cupón ya se había aplicado antes.</string>
+    <string name="accept">Aceptar</string>
+    <string name="cuppon_product">Este cupón es para un producto que no está en el carrito actualmente.</string>
+    <string name="cuppon_removed">Se ha eliminado el cupón por no haber productos asociados en el carrito</string>
 </resources>
 

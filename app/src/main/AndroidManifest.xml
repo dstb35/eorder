@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission. ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -22,6 +24,7 @@
         <activity android:name=".CartActivity" />
         <activity android:name=".MenuActivity" />
         <activity android:name=".TypesActivity" />
+        <activity android:name=".StoresActivity" />
         <activity android:name=".PreferenciasActivity" />
         <receiver android:name=".MyAdmin"
             android:label="sample_device_admin"

@@ -11,7 +11,7 @@ import net.benoodle.eorder.MainActivity;
 
 public class SharedPrefManager {
 
-    public static final String SP_HUBBING_APP = "spHubbingApp";
+    //public static final String SP_HUBBING_APP = "spHubbingApp";
     public static final String SP_NAME = "spName";
     public static final String SP_EMAIL = "spEmail";
     public static final String SP_PASSWORD = "spPassword";
@@ -25,6 +25,7 @@ public class SharedPrefManager {
     public static final String URL = "URL";
     public static final String STORE = "store";
     public static final String MODUS = "modus";
+    //public static final String VOLUNTARIOS = "voluntarios";
     private SharedPreferences sp;
     private SharedPreferences.Editor spEditor;
 
@@ -99,5 +100,5 @@ public class SharedPrefManager {
     }
     public String getSPCookieExpires() { return sp.getString(COOKIE_EXPIRES, ""); }
     public Boolean getSPModus() { return sp.getBoolean(MODUS, false); }
-
+    //public Boolean getSPVoluntarios() { return sp.getBoolean(VOLUNTARIOS, false); }
 }

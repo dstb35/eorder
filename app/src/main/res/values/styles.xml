@@ -12,6 +12,7 @@
         <item name="android:horizontalScrollViewStyle">@style/MyCustomHorizontalScrollBar</item>
         <item name="recyclerViewStyle">@style/MyCustomVerticalScrollBar</item>
         <item name="alertDialogTheme">@style/MyCustomAlertBox</item>
+        <item name="android:statusBarColor">@color/scrollbar</item>
     </style>
     <style name="MyCustomButton" parent="Widget.AppCompat.Button">
         <item name="android:background">@drawable/button</item>
@@ -69,5 +70,8 @@
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textSize">30dp</item>
         <item name="android:textColor">@color/text</item>
+    </style>
+    <style name="CustomProgressBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorControlActivated">@color/scrollbar</item>
     </style>
 </resources>

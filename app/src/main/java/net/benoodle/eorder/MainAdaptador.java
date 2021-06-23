@@ -17,7 +17,6 @@ public class MainAdaptador extends RecyclerView.Adapter<MainAdaptador.ViewHolder
     private Context context;
     private ComprarListener comprarListener;
     private ArrayList<Node> catType = new ArrayList<>();
-    //private String URL;
 
     public MainAdaptador(ArrayList<Node> catType, Context context, ComprarListener comprarListener) {
         this.context = context;
@@ -66,7 +65,7 @@ public class MainAdaptador extends RecyclerView.Adapter<MainAdaptador.ViewHolder
         holder.btComprar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                comprarListener.Añadir(node, 1);
+                comprarListener.Anadir(node, 1);
             }
         });
     }
@@ -76,7 +75,7 @@ public class MainAdaptador extends RecyclerView.Adapter<MainAdaptador.ViewHolder
     }
 
     public interface ComprarListener {
-        void Añadir(Node node, int cantidad);
+        void Anadir(Node node, int cantidad);
     }
 
 

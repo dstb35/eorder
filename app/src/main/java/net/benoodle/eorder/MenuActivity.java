@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ContextThemeWrapper;
 
 import net.benoodle.eorder.model.Node;
 
@@ -48,7 +49,9 @@ public class MenuActivity extends AppCompatActivity {
     public void PedirSelecciones() {
         //productos[] son las opciones asociadas al menú.
         productos = node.getProductos();
-        numRepeticiones = productos.size();
+        if (productos != null){
+            numRepeticiones = productos.size();
+        }
 
         //extras son los productos asociados al menú, postres del menú be noodle
         //Array.asList devuelve un array inmodificable, hay que usar un wrapper
@@ -65,7 +68,8 @@ public class MenuActivity extends AppCompatActivity {
             for (int i = 0; i < opciones.size(); i++) {
                 titulos[i] = opciones.get(i).getTitle();
             }
-            AlertDialog.Builder builder = new AlertDialog.Builder(MenuActivity.this);
+            //AlertDialog.Builder builder = new AlertDialog.Builder(MenuActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.MyCustomVerticalScrollBar));
             builder.setTitle(getResources().getString(R.string.choose) + " " + producto);
             builder.setCancelable(false);
             builder.setSingleChoiceItems(titulos, -1, new DialogInterface.OnClickListener() {
@@ -75,7 +79,7 @@ public class MenuActivity extends AppCompatActivity {
                     dialog.dismiss();
                     if (numRepeticiones == 1) {
                         //En la última repetición se pide los extras
-                        if (!extras.isEmpty()) {
+                        if ((extras != null) && (!extras.isEmpty())) {
                             pedirExtras();
                         } else {
                             //No hay comprobación de stock porque al menos una unidad habrá o se hubiese despublicado el producto.
@@ -96,6 +100,7 @@ public class MenuActivity extends AppCompatActivity {
             });
             AlertDialog dialog = builder.create();
             dialog.show();
+            dialog.getListView().setScrollbarFadingEnabled(false);
         }
     }
 
@@ -122,12 +127,14 @@ public class MenuActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-                AlertDialog.Builder builder = new AlertDialog.Builder(MenuActivity.this);
+                //AlertDialog.Builder builder = new AlertDialog.Builder(MenuActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.MyCustomVerticalScrollBar));
                 builder.setTitle(getResources().getString(R.string.choose));
                 builder.setCancelable(false);
                 builder.setSingleChoiceItems(extrasTitulos, -1, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int position) {
                         selecciones.add(extras.get(position));
+                        //Variación de menu con kakigori es el 28
                         if (node.getProductID().compareTo("28") == 0) {
                             pedirKakigori();
                         } else {
@@ -145,6 +152,7 @@ public class MenuActivity extends AppCompatActivity {
                 });
                 AlertDialog dialog = builder.create();
                 dialog.show();
+                dialog.getListView().setScrollbarFadingEnabled(false);
             } else {
                 Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_stock_dessert), Toast.LENGTH_SHORT).show();
                 finish();
@@ -170,7 +178,8 @@ public class MenuActivity extends AppCompatActivity {
         for (int i = 0; i < kakigoris.size(); i++) {
             titulos[i] = kakigoris.get(i).getTitle();
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(MenuActivity.this);
+        //AlertDialog.Builder builder = new AlertDialog.Builder(MenuActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.MyCustomVerticalScrollBar));
         builder.setTitle(getResources().getString(R.string.choose) + " " + "kakigori");
         builder.setCancelable(false);
         builder.setSingleChoiceItems(titulos, -1, new DialogInterface.OnClickListener() {
@@ -190,6 +199,7 @@ public class MenuActivity extends AppCompatActivity {
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+        dialog.getListView().setScrollbarFadingEnabled(false);
     }
 
     public void añadirMenu (){

@@ -4,6 +4,7 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.TextViewCompat;
 
@@ -13,6 +14,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,7 +23,9 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.squareup.picasso.Picasso;
+
 import net.benoodle.eorder.model.Catalog;
 import net.benoodle.eorder.model.Node;
 import net.benoodle.eorder.model.Tipo;
@@ -29,8 +33,13 @@ import net.benoodle.eorder.retrofit.ApiService;
 import net.benoodle.eorder.retrofit.SharedPrefManager;
 import net.benoodle.eorder.retrofit.UtilsApi;
 import net.benoodle.eorder.model.Order;
+
 import java.util.ArrayList;
 import java.util.Locale;
+
+import android.app.admin.DeviceAdminReceiver;
+
+import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,11 +55,11 @@ public class TypesActivity extends AppCompatActivity implements AdapterView.OnIt
     private ApiService mApiService;
     public static ArrayList<Tipo> tipos = new ArrayList<>();
     public static Catalog catalog;
-    private float screenWidth, screenHeight;
     private Spinner spinner;
     private String langCode;
-    private Locale myLocale;
-
+    private LinearLayout typesLayout;
+    private ArrayList<String> typesAvaliable;
+    private boolean check;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,56 +79,52 @@ public class TypesActivity extends AppCompatActivity implements AdapterView.OnIt
             String[] packages = {this.getPackageName()};
             myDevicePolicyManager.setLockTaskPackages(mDPM, packages);
         } else {
-            Toast.makeText(getApplicationContext(),"Not owner", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Not owner", Toast.LENGTH_LONG).show();
         }
         startLockTask();
         this.context = getApplicationContext();
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        this.screenHeight = displayMetrics.heightPixels /  displayMetrics.density;
-        this.screenWidth = displayMetrics.widthPixels / displayMetrics.density;
         sharedPrefManager = new SharedPrefManager(this);
-        this.URL = sharedPrefManager.getSPUrl();
-        this.order = new Order(sharedPrefManager.getSPStore());
-        this.langCode = "en";
-        mApiService = UtilsApi.getAPIService(this.URL);
         if (!sharedPrefManager.getSPIsLoggedIn()) {
-            Intent intent = new Intent(TypesActivity.this, LoginActivity.class);
+            Intent intent = new Intent(context, LoginActivity.class);
             startActivity(intent);
             finish();
         }
-        spinner = (Spinner) findViewById(R.id.spinner);
-        //Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        this.URL = sharedPrefManager.getSPUrl();
+        this.order = new Order(sharedPrefManager.getSPStore());
+        this.langCode = Locale.getDefault().getLanguage();
+        this.check = false;
+        mApiService = UtilsApi.getAPIService(this.URL);
+        spinner = findViewById(R.id.spinner);
         spinner.setOnItemSelectedListener(this);
-        //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-               // R.array.languages, android.R.layout.simple_spinner_item);
-        //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //spinner.setAdapter(adapter);
+        typesLayout = findViewById(R.id.types_layout);
+
     }
 
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-        // String lang= parent.getItemAtPosition(pos).toString();
-        String lang = getResources().getStringArray(R.array.langCodes)[pos];
-        Locale locale = new Locale(lang);
+        if (check) {
+            langCode = getResources().getStringArray(R.array.langCodes)[pos];
+        }else{
+            check = true;
+            String[] langCodes = getResources().getStringArray(R.array.langCodes);
+            if (langCode != null) {
+                for (int i=0; i<langCodes.length; i++){
+                    if (langCode.compareTo(langCodes[i]) == 0){
+                        int spinnerPosition = i;
+                        spinner.setSelection(spinnerPosition);
+                        break;
+                    }
+                }
+            }
+        }
+        Locale locale = new Locale(langCode);
         Locale.setDefault(locale);
         Configuration config = new Configuration();
         config.locale = locale;
+        langCode = Locale.getDefault().getLanguage();
         getBaseContext().getResources().updateConfiguration(config,
                 getBaseContext().getResources().getDisplayMetrics());
         mApiService.getTypes(sharedPrefManager.getSPBasicAuth(), langCode, sharedPrefManager.getSPCsrfToken()).enqueue(Typescallback);
-        //changeLang(lang);
-        /*switch (lang){
-            case "Español":
-                langCode = "es";
-                break;
-            case "Català":
-                langCode = "ca";
-                break;
-            case "English":
-                langCode = "en";
-                break;
-        }
-        changeLang(langCode);*/
+
     }
 
     public void onNothingSelected(AdapterView<?> parent) {
@@ -133,16 +138,6 @@ public class TypesActivity extends AppCompatActivity implements AdapterView.OnIt
         mApiService.getTypes(sharedPrefManager.getSPBasicAuth(), langCode, sharedPrefManager.getSPCsrfToken()).enqueue(Typescallback);
     }
 
-    /*public void changeLang(String languageCode){
-        Locale locale = new Locale(languageCode);
-        Locale.setDefault(locale);
-        Configuration config = new Configuration();
-        config.locale = locale;
-        getBaseContext().getResources().updateConfiguration(config,
-                getBaseContext().getResources().getDisplayMetrics());
-        mApiService.getTypes(sharedPrefManager.getSPBasicAuth(), langCode, sharedPrefManager.getSPCsrfToken()).enqueue(Typescallback);
-    }*/
-
     /*Lanza las preferencias de la app, pero están deshabilitado el botón ahora*/
     public void LanzarPreferencias(View v) {
         Intent intent = new Intent(this, PreferenciasActivity.class);
@@ -152,37 +147,40 @@ public class TypesActivity extends AppCompatActivity implements AdapterView.OnIt
     Callback<ArrayList<Node>> Nodecallback = new Callback<ArrayList<Node>>() {
         @Override
         public void onResponse(Call<ArrayList<Node>> call, Response<ArrayList<Node>> response) {
-            final ArrayList<String> typesAvaliable;
             if (response.isSuccessful()) {
-                LinearLayout typesLayout;
-                LinearLayout fourTypesLayout = new LinearLayout(context);
-                typesLayout = findViewById(R.id.types);
                 typesLayout.removeAllViews();
-                //Altura del layout para dividir el espacio entre títulos e imágenes
-                DisplayMetrics displayMetrics = new DisplayMetrics();
-                getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-                Double imagesWidth = new Float (displayMetrics.widthPixels)*0.20;
-                Double imagesHeight = new Float (displayMetrics.heightPixels)*0.45;
-                LinearLayout.LayoutParams titlesParams = new LinearLayout.LayoutParams(
-                        imagesWidth.intValue(),
-                        LinearLayout.LayoutParams.WRAP_CONTENT);
-                titlesParams.setMargins(15, 0, 15, 0);
                 catalog = new Catalog(response.body());
-                if(catalog.sincronizarStock(order)){
-                    Toast.makeText(context, getResources().getString(R.string.removed_sync), Toast.LENGTH_SHORT).show();
-                }
                 catalog.CrearTypes();
                 typesAvaliable = catalog.getTypes();
-                for (int i=0; i<typesAvaliable.size(); i++){
+                if (catalog.sincronizarStock(order)) {
+                    Toast.makeText(context, getResources().getString(R.string.removed_sync), Toast.LENGTH_SHORT).show();
+                }
+                LinearLayout fourTypesLayout = new LinearLayout(context);
+                fourTypesLayout.setOrientation(LinearLayout.HORIZONTAL);
+                fourTypesLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                ));
+                fourTypesLayout.setGravity(Gravity.CENTER);
+                typesLayout.addView(fourTypesLayout);
+                Double imagesHeight = new Float(findViewById(R.id.types_scroll).getHeight()) * 0.40;
+                Double titlesHeight = new Float(findViewById(R.id.types_scroll).getHeight()) * 0.10;
+                Double typeHeight = new Float(findViewById(R.id.types_scroll).getHeight()) * 0.5;
+                LinearLayout.LayoutParams titlesParams = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        imagesHeight.intValue() + titlesHeight.intValue());
+                titlesParams.setMargins(16, 0, 16, 0);
+
+                for (int i = 0; i < typesAvaliable.size(); i++) {
                     final String name = typesAvaliable.get(i);
-                    for (Tipo tipo : tipos){
-                        if (tipo.getId().compareTo(name) == 0){
-                            if (i%4 == 0){
+                    for (Tipo tipo : tipos) {
+                        if (tipo.getId().compareTo(name) == 0) {
+                            if (i % 4 == 0) {
                                 fourTypesLayout = new LinearLayout(context);
                                 fourTypesLayout.setOrientation(LinearLayout.HORIZONTAL);
                                 fourTypesLayout.setLayoutParams(new LinearLayout.LayoutParams(
                                         LinearLayout.LayoutParams.MATCH_PARENT,
-                                        imagesHeight.intValue()
+                                        ViewGroup.LayoutParams.WRAP_CONTENT
                                 ));
                                 fourTypesLayout.setGravity(Gravity.CENTER);
                                 typesLayout.addView(fourTypesLayout);
@@ -201,18 +199,28 @@ public class TypesActivity extends AppCompatActivity implements AdapterView.OnIt
                                     startActivity(intent);
                                 }
                             });
-                            Picasso.with(context).load(tipo.getUrl()).resize(imagesWidth.intValue(), 0).into(image);
+                            try {
+                                Picasso.with(context).load(tipo.getUrl()).resize(0, imagesHeight.intValue()).into(image);
+                            } catch (Exception e) {
+                                Picasso.with(context).load(tipo.getUrl()).into(image);
+                                Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                            }
                             titleLayout.addView(image);
                             TextView text = new TextView(context);
+                            text.setHeight(titlesHeight.intValue());
                             text.setText(tipo.getName());
-                            text.setWidth(imagesWidth.intValue());
-                            text.setMinHeight(80);
                             text.setGravity(Gravity.CENTER);
                             TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(text, 24, 100, 2, TypedValue.COMPLEX_UNIT_SP);
                             titleLayout.addView(text);
                             fourTypesLayout.addView(titleLayout);
                         }
                     }
+                }
+            }else{
+                try {
+                    Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Toast.makeText(context, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -232,6 +240,7 @@ public class TypesActivity extends AppCompatActivity implements AdapterView.OnIt
                 mApiService.getAllNodes(sharedPrefManager.getSPStore(), langCode, sharedPrefManager.getSPBasicAuth(), sharedPrefManager.getSPCsrfToken()).enqueue(Nodecallback);
             }
         }
+
         @Override
         public void onFailure(Call<ArrayList<Tipo>> call, Throwable t) {
             Toast.makeText(context, t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();

@@ -76,14 +76,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             holder.btMas.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    eliminarListener.Añadir(node.getProductID(),1, node.getType().equals(MENU), i);
+                    eliminarListener.Anadir(node.getProductID(),1, node.getType().equals(MENU), i);
                     eliminarListener.ActualizarTotal();
                 }
             });
             holder.btMenos.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    eliminarListener.Añadir(node.getProductID(),-1, node.getType().equals(MENU), i);
+                    eliminarListener.Anadir(node.getProductID(),-1, node.getType().equals(MENU), i);
                     eliminarListener.ActualizarTotal();
                 }
             });
@@ -99,7 +99,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     public interface EliminarListener{
         void Eliminar(int i);
-        void Añadir(String productID, int quantity, Boolean menu, int i);
+        void Anadir(String productID, int quantity, Boolean menu, int i);
         void ActualizarTotal();
     }
 }
